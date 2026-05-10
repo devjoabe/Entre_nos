@@ -1,16 +1,15 @@
 .login-container {
-    min-height: 100vh;
-    min-height: -webkit-fill-available;
+    height: 100vh;
+    height: 100dvh; /* suporte moderno, mais preciso no iOS */
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 2rem 1.5rem;
-    padding-bottom: calc(2rem + env(safe-area-inset-bottom));
+    padding: 1.5rem;
 }
 
 .login-box {
     width: 100%;
-    max-width: 380px;
+    max-width: 360px;
     text-align: center;
     animation: loginFadeIn 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
