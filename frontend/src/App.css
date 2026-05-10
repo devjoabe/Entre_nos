@@ -71,7 +71,7 @@
 
 @media screen and (max-width: 768px) {
   .app-container {
-    padding-bottom: 6rem; /* Make room for bottom nav */
+    padding: 1rem 1rem calc(5rem + env(safe-area-inset-bottom)) 1rem; /* Make room for bottom nav and safe area */
   }
 
   .app-header {
@@ -89,31 +89,32 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(20, 10, 15, 0.9);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    padding: 0.5rem 1rem;
-    border-top: 1px solid rgba(232, 160, 160, 0.1);
+    background: rgba(20, 10, 15, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 0.5rem 1rem calc(0.5rem + env(safe-area-inset-bottom)) 1rem; /* iPhone safe area support */
+    border-top: 1px solid rgba(232, 160, 160, 0.15);
     z-index: 1000;
-    justify-content: space-between;
+    justify-content: space-around;
   }
 
   .nav-tab {
-    padding: 0.5rem;
-    font-size: 0.85rem;
+    padding: 0.8rem 0.5rem;
+    font-size: 0.8rem;
     border-bottom: none;
+    gap: 0.4rem;
   }
 
   .nav-tab.active {
     border-bottom: none;
     color: #f4b4b4;
-    transform: translateY(-2px);
+    transform: translateY(-3px);
   }
 
   /* Make primary buttons full width on mobile */
   .btn-primary, .btn-enviar {
     width: 100%;
-    min-width: 260px;
+    min-width: 100%;
     justify-content: center;
   }
 }
@@ -147,6 +148,17 @@
   justify-content: center;
   gap: 0.3rem;
   text-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  padding: 0 1.5rem;
+}
+
+@media screen and (max-width: 768px) {
+  .intro-text {
+    font-size: 3rem;
+  }
+
+  .intro-subtitle-anim {
+    font-size: 1.4rem;
+  }
 }
 
 .word-reveal {

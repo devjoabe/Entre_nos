@@ -119,3 +119,22 @@
     border-bottom: 1px solid rgba(201, 169, 110, 0.3);
     padding-bottom: 1rem;
 }
+
+@media screen and (max-width: 768px) {
+    .cartas-grid {
+        grid-template-columns: 1fr;
+        padding: 0.5rem;
+    }
+    
+    .carta-envelope.aberta {
+        padding: 1.5rem;
+    }
+    
+    .carta-paper h3 {
+        font-size: 1.5rem;
+    }
+    
+    .carta-paper {
+        font-size: 1rem;
+    }
+}

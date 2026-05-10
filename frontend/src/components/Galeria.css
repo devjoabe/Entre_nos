@@ -64,3 +64,25 @@ When using real images, they will automatically scale well with this rule:
     object-fit: cover;
 }
 */
+
+@media screen and (max-width: 768px) {
+    .galeria-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+        padding: 0.5rem;
+    }
+
+    .galeria-header {
+        margin-bottom: 1.5rem;
+    }
+
+    .galeria-header h2 {
+        font-size: 1.8rem;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .galeria-grid {
+        grid-template-columns: 1fr;
+    }
+}

@@ -4,6 +4,14 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  /* Previne overflow horizontal em celulares */
+  max-width: 100%;
+}
+
+html {
+  /* Scroll suave nativo no iOS */
+  -webkit-overflow-scrolling: touch;
+  height: 100%;
 }
 
 body {
@@ -18,10 +26,18 @@ body {
   background-attachment: fixed;
   color: #f8f9fa;
   min-height: 100vh;
+  min-height: -webkit-fill-available; /* Fix para 100vh no Safari/iOS */
+  /* Previne scroll horizontal indesejado */
+  overflow-x: hidden;
 }
 
 h1, h2, h3, p, span {
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Inputs e textareas: previne zoom automático no iOS (precisa de font-size >= 16px) */
+input, textarea, select {
+  font-size: 16px !important;
 }
 
 code {

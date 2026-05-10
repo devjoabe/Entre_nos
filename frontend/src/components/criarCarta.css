@@ -96,3 +96,26 @@
     transform: none;
     box-shadow: none;
 }
+
+@media screen and (max-width: 768px) {
+    .criar-carta-container {
+        padding: 1.5rem 1rem;
+        margin: 1rem auto;
+        border-radius: 12px;
+        max-width: 100%;
+    }
+
+    .criar-carta-container h2 {
+        font-size: 1.6rem;
+    }
+
+    .form-group textarea {
+        min-height: 130px;
+    }
+
+    .btn-enviar {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1rem;
+    }
+}

@@ -193,6 +193,10 @@
     .left .timeline-dot, .right .timeline-dot {
         left: 23px;
     }
+    
+    .modal-box {
+        padding: 1.5rem;
+    }
 }
 
 /* Modal Overlay Styles */
