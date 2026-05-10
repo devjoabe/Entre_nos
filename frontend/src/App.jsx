@@ -5,8 +5,8 @@ import Galeria from './components/Galeria'
 import './App.css'
 
 function App() {
-  const [activeTab, setActiveTab] = useState('cartas'); 
-  const [introStage, setIntroStage] = useState(0); 
+  const [activeTab, setActiveTab] = useState('cartas');
+  const [introStage, setIntroStage] = useState(0);
 
   useEffect(() => {
     // Sequência de animação
@@ -28,12 +28,11 @@ function App() {
       <div className="intro-container">
         {introStage === 0 && <h1 className="intro-text fade-in">Entre nós</h1>}
         {introStage === 1 && <h1 className="intro-text fade-out">Entre nós</h1>}
-        
         {introStage === 2 && (
           <p className="intro-subtitle-anim">
             {subtitulo.map((word, index) => (
-              <span 
-                key={index} 
+              <span
+                key={index}
                 className="word-reveal"
                 style={{ animationDelay: `${index * 0.4}s` }}
               >
@@ -50,19 +49,19 @@ function App() {
     <div className="app-container page-fade-in">
       <header className="app-header">
         <nav className="app-nav">
-          <button 
+          <button
             className={`nav-tab ${activeTab === 'cartas' ? 'active' : ''}`}
             onClick={() => setActiveTab('cartas')}
           >
             ✉ Cartas
           </button>
-          <button 
+          <button
             className={`nav-tab ${activeTab === 'timeline' ? 'active' : ''}`}
             onClick={() => setActiveTab('timeline')}
           >
             ✎ Nossa História
           </button>
-          <button 
+          <button
             className={`nav-tab ${activeTab === 'galeria' ? 'active' : ''}`}
             onClick={() => setActiveTab('galeria')}
           >
@@ -76,7 +75,7 @@ function App() {
         {activeTab === 'timeline' && <Timeline />}
         {activeTab === 'galeria' && <Galeria />}
       </main>
-      
+
       <footer className="app-footer">
         Feito com muito amor para você.
       </footer>
