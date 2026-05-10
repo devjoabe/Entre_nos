@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import cartas, eventos
+from app.routes import cartas, eventos, auth
 from app.database import engine
 from app import models
 
@@ -18,5 +18,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(auth.router)
 app.include_router(cartas.router)
 app.include_router(eventos.router)

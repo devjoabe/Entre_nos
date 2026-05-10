@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from datetime import datetime
 from app.database import get_db
 from app.models import CartaDB
+from app.auth_middleware import verify_token
 
 router = APIRouter(prefix="/cartas")
 
@@ -19,11 +20,11 @@ class Carta(CartaCreate):
         orm_mode = True
         from_attributes = True
 
-@router.get("/")
+@router.get("/", dependencies=[Depends(verify_token)])
 def listar_cartas(db: Session = Depends(get_db)):
     return db.query(CartaDB).all()
 
-@router.post("/")
+@router.post("/", dependencies=[Depends(verify_token)])
 def criar_carta(carta: CartaCreate, db: Session = Depends(get_db)):
     nova_carta = CartaDB(
         titulo=carta.titulo,
@@ -35,30 +36,28 @@ def criar_carta(carta: CartaCreate, db: Session = Depends(get_db)):
     db.refresh(nova_carta)
     return {"msg": "Carta criada", "id": nova_carta.id}
 
-@router.get("/{id}")
+@router.get("/{id}", dependencies=[Depends(verify_token)])
 def ler_carta(id: str, db: Session = Depends(get_db)):
     carta = db.query(CartaDB).filter(CartaDB.id == id).first()
     if not carta:
         raise HTTPException(status_code=404, detail="Carta não encontrada")
     return carta
 
-@router.put("/{id}")
+@router.put("/{id}", dependencies=[Depends(verify_token)])
 def atualizar_carta(id: str, carta_update: CartaCreate, db: Session = Depends(get_db)):
     carta = db.query(CartaDB).filter(CartaDB.id == id).first()
     if not carta:
         raise HTTPException(status_code=404, detail="Carta não encontrada")
-    
     carta.titulo = carta_update.titulo
     carta.conteudo = carta_update.conteudo
     db.commit()
     return {"msg": "Carta atualizada"}
 
-@router.delete("/{id}")
+@router.delete("/{id}", dependencies=[Depends(verify_token)])
 def deletar_carta(id: str, db: Session = Depends(get_db)):
     carta = db.query(CartaDB).filter(CartaDB.id == id).first()
     if not carta:
         raise HTTPException(status_code=404, detail="Carta não encontrada")
-    
     db.delete(carta)
     db.commit()
     return {"msg": "Carta deletada"}

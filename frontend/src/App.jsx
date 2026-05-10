@@ -2,27 +2,50 @@ import { useState, useEffect } from 'react'
 import CartasGrid from './components/CartasGrid'
 import Timeline from './components/Timeline'
 import Galeria from './components/Galeria'
+import Login from './components/Login'
+import { getToken, saveToken } from './services/api'
 import './App.css'
 
 function App() {
   const [activeTab, setActiveTab] = useState('cartas');
   const [introStage, setIntroStage] = useState(0);
+  const [autenticado, setAutenticado] = useState(false);
+
+  // Verifica se já tem token salvo ao carregar o app
+  useEffect(() => {
+    const token = getToken();
+    if (token) setAutenticado(true);
+  }, []);
 
   useEffect(() => {
-    // Sequência de animação
-    const t1 = setTimeout(() => setIntroStage(1), 2500); // 1. "Entre nós" some
-    const t2 = setTimeout(() => setIntroStage(2), 3300); // 2. "Para guardar..." aparece
-    const t3 = setTimeout(() => setIntroStage(3), 6500); // 3. Aplicação principal aparece
+    if (!autenticado) return;
+
+    // Sequência de animação só roda após autenticação
+    const t1 = setTimeout(() => setIntroStage(1), 2500);
+    const t2 = setTimeout(() => setIntroStage(2), 3300);
+    const t3 = setTimeout(() => setIntroStage(3), 6500);
 
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
       clearTimeout(t3);
     };
-  }, []);
+  }, [autenticado]);
+
+  const handleLogin = (token) => {
+    saveToken(token);
+    setIntroStage(0); // reseta intro
+    setAutenticado(true);
+  };
+
+  // Não autenticado → Tela de Login
+  if (!autenticado) {
+    return <Login onLogin={handleLogin} />;
+  }
 
   const subtitulo = "Para guardar nossos sentimentos".split(" ");
 
+  // Animação de intro (só na primeira vez após login)
   if (introStage < 3) {
     return (
       <div className="intro-container">
