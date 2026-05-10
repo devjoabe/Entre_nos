@@ -9,7 +9,7 @@ load_dotenv()
 
 router = APIRouter(prefix="/auth")
 
-SECRET_PASSWORD = os.getenv("SECRET_PASSWORD", "StephenKing")
+SECRET_PASSWORD = os.getenv("SECRET_PASSWORD", "stephenking")
 JWT_SECRET = os.getenv("JWT_SECRET", "entre-nos-segredo-super-secreto-e-longo-2024")
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
 JWT_EXPIRE_HOURS = int(os.getenv("JWT_EXPIRE_HOURS", "720"))
