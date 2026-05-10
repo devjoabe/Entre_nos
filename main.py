@@ -1,6 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routes import cartas, eventos
+from app.database import engine
+from app import models
+
+# Cria as tabelas no banco de dados se não existirem
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 

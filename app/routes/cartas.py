@@ -1,7 +1,9 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
+from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from datetime import datetime
-import uuid
+from app.database import get_db
+from app.models import CartaDB
 
 router = APIRouter(prefix="/cartas")
 
@@ -13,43 +15,50 @@ class Carta(CartaCreate):
     id: str
     data_criacao: datetime
 
-cartas_db: list[Carta] = []
+    class Config:
+        orm_mode = True
+        from_attributes = True
 
 @router.get("/")
-def listar_cartas():
-    return cartas_db
+def listar_cartas(db: Session = Depends(get_db)):
+    return db.query(CartaDB).all()
 
 @router.post("/")
-def criar_carta(carta: CartaCreate):
-    nova_carta = Carta(
-        id=str(uuid.uuid4()),
+def criar_carta(carta: CartaCreate, db: Session = Depends(get_db)):
+    nova_carta = CartaDB(
         titulo=carta.titulo,
         conteudo=carta.conteudo,
         data_criacao=datetime.now()
     )
-    cartas_db.append(nova_carta)
+    db.add(nova_carta)
+    db.commit()
+    db.refresh(nova_carta)
     return {"msg": "Carta criada", "id": nova_carta.id}
 
 @router.get("/{id}")
-def ler_carta(id: str):
-    for carta in cartas_db:
-        if carta.id == id:
-            return carta
-    raise HTTPException(status_code=404, detail="Carta não encontrada")
+def ler_carta(id: str, db: Session = Depends(get_db)):
+    carta = db.query(CartaDB).filter(CartaDB.id == id).first()
+    if not carta:
+        raise HTTPException(status_code=404, detail="Carta não encontrada")
+    return carta
 
 @router.put("/{id}")
-def atualizar_carta(id: str, carta_update: CartaCreate):
-    for i, carta in enumerate(cartas_db):
-        if carta.id == id:
-            cartas_db[i].titulo = carta_update.titulo
-            cartas_db[i].conteudo = carta_update.conteudo
-            return {"msg": "Carta atualizada"}
-    raise HTTPException(status_code=404, detail="Carta não encontrada")
+def atualizar_carta(id: str, carta_update: CartaCreate, db: Session = Depends(get_db)):
+    carta = db.query(CartaDB).filter(CartaDB.id == id).first()
+    if not carta:
+        raise HTTPException(status_code=404, detail="Carta não encontrada")
+    
+    carta.titulo = carta_update.titulo
+    carta.conteudo = carta_update.conteudo
+    db.commit()
+    return {"msg": "Carta atualizada"}
 
 @router.delete("/{id}")
-def deletar_carta(id: str):
-    for i, carta in enumerate(cartas_db):
-        if carta.id == id:
-            cartas_db.pop(i)
-            return {"msg": "Carta deletada"}
-    raise HTTPException(status_code=404, detail="Carta não encontrada")
+def deletar_carta(id: str, db: Session = Depends(get_db)):
+    carta = db.query(CartaDB).filter(CartaDB.id == id).first()
+    if not carta:
+        raise HTTPException(status_code=404, detail="Carta não encontrada")
+    
+    db.delete(carta)
+    db.commit()
+    return {"msg": "Carta deletada"}

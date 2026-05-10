@@ -1,7 +1,9 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
+from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from datetime import datetime
-import uuid
+from app.database import get_db
+from app.models import EventoDB
 
 router = APIRouter(prefix="/eventos")
 
@@ -12,42 +14,49 @@ class EventoCreate(BaseModel):
 class Evento(EventoCreate):
     id: str
 
-eventos_db: list[Evento] = []
+    class Config:
+        orm_mode = True
+        from_attributes = True
 
 @router.get("/")
-def listar_eventos():
-    return eventos_db
+def listar_eventos(db: Session = Depends(get_db)):
+    return db.query(EventoDB).all()
 
 @router.post("/")
-def criar_evento(evento: EventoCreate):
-    novo_evento = Evento(
-        id=str(uuid.uuid4()),
+def criar_evento(evento: EventoCreate, db: Session = Depends(get_db)):
+    novo_evento = EventoDB(
         texto=evento.texto,
         data_evento=evento.data_evento
     )
-    eventos_db.append(novo_evento)
+    db.add(novo_evento)
+    db.commit()
+    db.refresh(novo_evento)
     return {"msg": "Evento criado", "id": novo_evento.id}
 
 @router.get("/{id}")
-def ler_evento(id: str):
-    for evento in eventos_db:
-        if evento.id == id:
-            return evento
-    raise HTTPException(status_code=404, detail="Evento não encontrado")
+def ler_evento(id: str, db: Session = Depends(get_db)):
+    evento = db.query(EventoDB).filter(EventoDB.id == id).first()
+    if not evento:
+        raise HTTPException(status_code=404, detail="Evento não encontrado")
+    return evento
 
 @router.put("/{id}")
-def atualizar_evento(id: str, evento_update: EventoCreate):
-    for i, evento in enumerate(eventos_db):
-        if evento.id == id:
-            eventos_db[i].texto = evento_update.texto
-            eventos_db[i].data_evento = evento_update.data_evento
-            return {"msg": "Evento atualizado"}
-    raise HTTPException(status_code=404, detail="Evento não encontrado")
+def atualizar_evento(id: str, evento_update: EventoCreate, db: Session = Depends(get_db)):
+    evento = db.query(EventoDB).filter(EventoDB.id == id).first()
+    if not evento:
+        raise HTTPException(status_code=404, detail="Evento não encontrado")
+    
+    evento.texto = evento_update.texto
+    evento.data_evento = evento_update.data_evento
+    db.commit()
+    return {"msg": "Evento atualizado"}
 
 @router.delete("/{id}")
-def deletar_evento(id: str):
-    for i, evento in enumerate(eventos_db):
-        if evento.id == id:
-            eventos_db.pop(i)
-            return {"msg": "Evento deletado"}
-    raise HTTPException(status_code=404, detail="Evento não encontrado")
+def deletar_evento(id: str, db: Session = Depends(get_db)):
+    evento = db.query(EventoDB).filter(EventoDB.id == id).first()
+    if not evento:
+        raise HTTPException(status_code=404, detail="Evento não encontrado")
+    
+    db.delete(evento)
+    db.commit()
+    return {"msg": "Evento deletado"}
