@@ -20,3 +20,10 @@ class EventoDB(Base):
     id = Column(String, primary_key=True, index=True, default=generate_uuid)
     texto = Column(Text)
     data_evento = Column(DateTime)
+
+class FotoDB(Base):
+    __tablename__ = "fotos"
+
+    id = Column(String, primary_key=True, index=True, default=generate_uuid)
+    url = Column(String) # Caminho do arquivo ou URL
+    data_upload = Column(DateTime, default=datetime.utcnow)

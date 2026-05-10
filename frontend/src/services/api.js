@@ -100,3 +100,32 @@ export async function deletarEvento(id) {
     });
     return res.json();
 }
+
+// Galeria
+export async function buscarFotos() {
+    const res = await fetch(`${API_URL}/galeria`, { headers: authHeaders() });
+    return res.json();
+}
+
+export async function uploadFoto(file) {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const token = getToken();
+    const res = await fetch(`${API_URL}/galeria/upload`, {
+        method: "POST",
+        headers: {
+            ...(token ? { "Authorization": `Bearer ${token}` } : {}),
+        },
+        body: formData
+    });
+    return res.json();
+}
+
+export async function deletarFoto(id) {
+    const res = await fetch(`${API_URL}/galeria/${id}`, {
+        method: "DELETE",
+        headers: authHeaders(),
+    });
+    return res.json();
+}

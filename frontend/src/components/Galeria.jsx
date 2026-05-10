@@ -1,18 +1,57 @@
+import { useState, useEffect, useRef } from "react";
+import { buscarFotos, uploadFoto, deletarFoto } from "../services/api";
 import "./Galeria.css";
 
 export default function Galeria() {
-    // Lista de placeholders com alturas diferentes para simular o efeito Masonry
-    const fotos = [
-        { id: 1, color: "#4a1c2c", icon: "♥", height: "300px" },
-        { id: 2, color: "#3a242a", icon: "✳", height: "400px" },
-        { id: 3, color: "#2d244a", icon: "⬡", height: "350px" },
-        { id: 4, color: "#2a243a", icon: "✦", height: "450px" },
-        { id: 5, color: "#1c2c1c", icon: "✿", height: "300px" },
-        { id: 6, color: "#3a2a1c", icon: "✧", height: "380px" },
-        { id: 7, color: "#1c243a", icon: "◇", height: "320px" },
-        { id: 8, color: "#2a3a2a", icon: "◆", height: "420px" },
-        { id: 9, color: "#1c3a2a", icon: "♡", height: "360px" },
-    ];
+    const [fotos, setFotos] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const fileInputRef = useRef(null);
+    const API_URL = `http://${window.location.hostname}:8000`;
+
+    useEffect(() => {
+        carregarFotos();
+    }, []);
+
+    const carregarFotos = async () => {
+        try {
+            const data = await buscarFotos();
+            setFotos(data);
+        } catch (error) {
+            console.error("Erro ao carregar fotos:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleAddClick = () => {
+        fileInputRef.current.click();
+    };
+
+    const handleFileChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        setLoading(true);
+        try {
+            await uploadFoto(file);
+            await carregarFotos(); // Recarrega a lista
+        } catch (error) {
+            alert("Erro ao subir foto. Tente novamente.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDelete = async (id) => {
+        if (!confirm("Tem certeza que deseja apagar essa lembrança?")) return;
+
+        try {
+            await deletarFoto(id);
+            setFotos(fotos.filter(f => f.id !== id));
+        } catch (error) {
+            alert("Erro ao deletar foto.");
+        }
+    };
 
     return (
         <div className="galeria-page">
@@ -21,24 +60,51 @@ export default function Galeria() {
                 <p>Momentos que ficaram para sempre</p>
             </header>
 
-            <div className="galeria-masonry">
-                {fotos.map((foto) => (
-                    <div 
-                        key={foto.id} 
-                        className="galeria-item"
-                        style={{ height: foto.height, backgroundColor: foto.color }}
-                    >
-                        <div className="galeria-overlay">
-                            <span className="galeria-icon">{foto.icon}</span>
-                            <button className="galeria-delete-btn">🗑</button>
+            {loading && fotos.length === 0 ? (
+                <div className="loading-container">Carregando memórias...</div>
+            ) : (
+                <div className="galeria-masonry">
+                    {fotos.map((foto) => (
+                        <div key={foto.id} className="galeria-item">
+                            <img 
+                                src={`${API_URL}${foto.url}`} 
+                                alt="Momento especial" 
+                                loading="lazy"
+                            />
+                            <div className="galeria-overlay">
+                                <button 
+                                    className="galeria-delete-btn"
+                                    onClick={() => handleDelete(foto.id)}
+                                    title="Remover lembrança"
+                                >
+                                    🗑
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                ))}
-            </div>
+                    ))}
+                </div>
+            )}
+
+            {!loading && fotos.length === 0 && (
+                <div className="empty-galeria">
+                    <p>Ainda não temos fotos aqui. Que tal adicionar a primeira?</p>
+                </div>
+            )}
 
             <div className="galeria-footer">
-                <button className="btn-add-foto">
-                    <span>📷</span> Adicionar foto
+                <input 
+                    type="file" 
+                    accept="image/*" 
+                    style={{ display: "none" }} 
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                />
+                <button 
+                    className="btn-add-foto" 
+                    onClick={handleAddClick}
+                    disabled={loading}
+                >
+                    <span>📷</span> {loading ? "Enviando..." : "Adicionar foto"}
                 </button>
             </div>
         </div>
