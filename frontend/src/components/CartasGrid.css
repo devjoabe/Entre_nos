@@ -1,0 +1,121 @@
+.cartas-page, .timeline-page, .galeria-page {
+    animation: fadeIn 0.5s ease;
+}
+
+.page-actions {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.btn-primary {
+    background: #E8A0A0;
+    color: #1a0b1c;
+    border: none;
+    padding: 0.9rem 1.8rem;
+    border-radius: 30px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-primary:hover {
+    background: #f4b4b4;
+    transform: scale(1.03);
+    box-shadow: 0 0 15px rgba(232, 160, 160, 0.4);
+}
+
+.cartas-loading, .cartas-empty {
+    text-align: center;
+    color: #C9A96E;
+    font-size: 1.2rem;
+    margin-top: 3rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+}
+
+.cartas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+    padding: 1rem;
+}
+
+.carta-envelope {
+    background: rgba(30, 15, 25, 0.6);
+    border: 1px solid rgba(232, 160, 160, 0.2);
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.carta-envelope:hover {
+    transform: translateY(-5px);
+    border-color: #E8A0A0;
+    box-shadow: 0 8px 25px rgba(232, 160, 160, 0.15);
+}
+
+.carta-envelope.aberta {
+    grid-column: 1 / -1;
+    background: rgba(40, 20, 30, 0.8);
+    cursor: default;
+    transform: none;
+    padding: 3rem;
+}
+
+.envelope-cover h3 {
+    font-family: 'Cormorant Garamond', serif;
+    color: #E8A0A0;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.envelope-icon {
+    font-size: 3rem;
+    color: #C9A96E;
+    display: block;
+    margin-bottom: 1rem;
+    opacity: 0.8;
+}
+
+.click-hint {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    color: #888;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.carta-envelope:hover .click-hint {
+    opacity: 1;
+}
+
+.carta-envelope.aberta .envelope-cover {
+    display: none;
+}
+
+.carta-paper {
+    text-align: left;
+    color: #f0f0f0;
+    font-family: 'Inter', sans-serif;
+    line-height: 1.8;
+    font-size: 1.1rem;
+    animation: fadeIn 0.5s ease;
+}
+
+.carta-paper h3 {
+    font-family: 'Cormorant Garamond', serif;
+    color: #E8A0A0;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    border-bottom: 1px solid rgba(201, 169, 110, 0.3);
+    padding-bottom: 1rem;
+}
