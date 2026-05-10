@@ -70,27 +70,29 @@ function App() {
 
   return (
     <div className="app-container page-fade-in">
+      <nav className="app-nav">
+        <button
+          className={`nav-tab ${activeTab === 'cartas' ? 'active' : ''}`}
+          onClick={() => setActiveTab('cartas')}
+        >
+          ✉ Cartas
+        </button>
+        <button
+          className={`nav-tab ${activeTab === 'timeline' ? 'active' : ''}`}
+          onClick={() => setActiveTab('timeline')}
+        >
+          ✎ Nossa História
+        </button>
+        <button
+          className={`nav-tab ${activeTab === 'galeria' ? 'active' : ''}`}
+          onClick={() => setActiveTab('galeria')}
+        >
+          ✦ Galeria
+        </button>
+      </nav>
+
       <header className="app-header">
-        <nav className="app-nav">
-          <button
-            className={`nav-tab ${activeTab === 'cartas' ? 'active' : ''}`}
-            onClick={() => setActiveTab('cartas')}
-          >
-            ✉ Cartas
-          </button>
-          <button
-            className={`nav-tab ${activeTab === 'timeline' ? 'active' : ''}`}
-            onClick={() => setActiveTab('timeline')}
-          >
-            ✎ Nossa História
-          </button>
-          <button
-            className={`nav-tab ${activeTab === 'galeria' ? 'active' : ''}`}
-            onClick={() => setActiveTab('galeria')}
-          >
-            ✦ Galeria
-          </button>
-        </nav>
+        <h1 className="app-title">Entre Nós</h1>
       </header>
 
       <main className="app-main">
