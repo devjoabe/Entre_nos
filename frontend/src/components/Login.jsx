@@ -62,14 +62,14 @@ export default function Login({ onLogin }) {
                         className="login-dica-btn"
                         onClick={() => setDicaVisivel(!dicaVisivel)}
                     >
-                        {dicaVisivel ? "Esconder dica" : "Precisa de uma dica?"}
+                        {dicaVisivel ? "Esconder dica" : "Dica"}
                     </button>
 
                     {dicaVisivel && (
                         <p className="login-dica-texto">
                             O autor do livro que você estava lendo quando nós nos conhecemos.
                             <br />
-                            <span className="login-dica-detalhe">Sem espaços, com a primeira letra maiúscula.</span>
+                            <span className="login-dica-detalhe">Sem espaços e tudo minusculo.</span>
                         </p>
                     )}
                 </form>
