@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:8000";
+const API_URL = `http://${window.location.hostname}:8000`;
 
 export async function criarCarta(data) {
     const res = await fetch(`${API_URL}/cartas`, {
