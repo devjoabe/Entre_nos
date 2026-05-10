@@ -69,41 +69,45 @@ function App() {
   }
 
   return (
-    <div className="app-container page-fade-in">
+    <div className="app-root page-fade-in">
       <nav className="app-nav">
-        <button
-          className={`nav-tab ${activeTab === 'cartas' ? 'active' : ''}`}
-          onClick={() => setActiveTab('cartas')}
-        >
-          ✉ Cartas
-        </button>
-        <button
-          className={`nav-tab ${activeTab === 'timeline' ? 'active' : ''}`}
-          onClick={() => setActiveTab('timeline')}
-        >
-          ✎ Nossa História
-        </button>
-        <button
-          className={`nav-tab ${activeTab === 'galeria' ? 'active' : ''}`}
-          onClick={() => setActiveTab('galeria')}
-        >
-          ✦ Galeria
-        </button>
+        <div className="nav-content">
+          <button
+            className={`nav-tab ${activeTab === 'cartas' ? 'active' : ''}`}
+            onClick={() => setActiveTab('cartas')}
+          >
+            ✉ Cartas
+          </button>
+          <button
+            className={`nav-tab ${activeTab === 'timeline' ? 'active' : ''}`}
+            onClick={() => setActiveTab('timeline')}
+          >
+            ✎ Nossa História
+          </button>
+          <button
+            className={`nav-tab ${activeTab === 'galeria' ? 'active' : ''}`}
+            onClick={() => setActiveTab('galeria')}
+          >
+            ✦ Galeria
+          </button>
+        </div>
       </nav>
 
-      <header className="app-header">
-        <h1 className="app-title">Entre Nós</h1>
-      </header>
+      <div className="app-container">
+        <header className="app-header">
+          <h1 className="app-title">Entre Nós</h1>
+        </header>
 
-      <main className="app-main">
-        {activeTab === 'cartas' && <CartasGrid />}
-        {activeTab === 'timeline' && <Timeline />}
-        {activeTab === 'galeria' && <Galeria />}
-      </main>
+        <main className="app-main">
+          {activeTab === 'cartas' && <CartasGrid />}
+          {activeTab === 'timeline' && <Timeline />}
+          {activeTab === 'galeria' && <Galeria />}
+        </main>
 
-      <footer className="app-footer">
-        Feito com muito amor para você.
-      </footer>
+        <footer className="app-footer">
+          Feito com muito amor para você.
+        </footer>
+      </div>
     </div>
   )
 }
