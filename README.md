@@ -1,6 +1,6 @@
 <div align="center">
   <img src="frontend/public/icons.svg" alt="Entre Nós Logo" width="120" />
-  <h1>Entre Nós 💌</h1>
+  <h1>Entre Nós </h1>
   <p>Uma cápsula do tempo digital interativa, criada com muito amor para celebrar e guardar memórias inesquecíveis.</p>
   
   <p>
@@ -13,23 +13,23 @@
 
 <br>
 
-## 📌 Sobre o Projeto
+##  Sobre o Projeto
 **Entre Nós** não é apenas um projeto de software, é um presente. Desenvolvido para ser um refúgio seguro de sentimentos, ele permite registrar momentos marcantes em uma linha do tempo, escrever e guardar cartas virtuais, e ter uma galeria dedicada aos melhores momentos do casal.
 
 A interface foi projetada para ser minimalista, elegante e focar no que realmente importa: a experiência e a emoção de ler e reviver memórias.
 
 ---
 
-## ✨ Funcionalidades (Features)
+##  Funcionalidades (Features)
 
-- ✉️ **Cartas com Amor:** Um sistema de cartas virtuais onde você pode escrever e ler textos longos com muito carinho. Apresentação em formato de envelopes interativos.
-- 🕰️ **Nossa História (Timeline):** Linha do tempo dinâmica para registrar datas e acontecimentos importantes do relacionamento.
-- 🖼️ **Galeria de Memórias:** Um espaço visual focado em destacar as melhores lembranças em formato de fotos.
-- 🪄 **Interface Imersiva:** Animações fluidas, efeitos de revelação (fade-in/fade-out) e design responsivo moderno.
+-  **Cartas com Amor:** Um sistema de cartas virtuais onde você pode escrever e ler textos longos com muito carinho. Apresentação em formato de envelopes interativos.
+-  **Nossa História (Timeline):** Linha do tempo dinâmica para registrar datas e acontecimentos importantes do relacionamento.
+-  **Galeria de Memórias:** Um espaço visual focado em destacar as melhores lembranças em formato de fotos.
+-  **Interface Imersiva:** Animações fluidas, efeitos de revelação (fade-in/fade-out) e design responsivo moderno.
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+##  Tecnologias Utilizadas
 
 O projeto foi construído usando uma arquitetura moderna separando o Frontend (SPA) do Backend (API).
 
@@ -45,7 +45,7 @@ O projeto foi construído usando uma arquitetura moderna separando o Frontend (S
 
 ---
 
-## 🚀 Como rodar localmente (Getting Started)
+##  Como rodar localmente (Getting Started)
 
 Se você quiser rodar este projeto na sua máquina local, siga os passos abaixo:
 
@@ -92,19 +92,19 @@ Acesse `http://localhost:5173` no seu navegador e aproveite a experiência!
 
 ---
 
-## 📂 Estrutura do Projeto
+##  Estrutura do Projeto
 
 ```text
-📦 Entre_nos
- ┣ 📂 app              # Código do Backend (FastAPI)
- ┃ ┣ 📂 routes         # Endpoints da API (cartas, eventos)
- ┃ ┗ 📜 __init__.py
- ┣ 📂 frontend         # Código do Frontend (React + Vite)
- ┃ ┣ 📂 src            # Código-fonte principal (Componentes, Views, CSS)
- ┃ ┣ 📂 public         # Assets públicos
- ┃ ┗ 📜 package.json   # Dependências do frontend
- ┣ 📜 main.py          # Arquivo de inicialização do Backend
- ┗ 📜 requirements.txt # Dependências do Backend Python
+ Entre_nos
+ ┣  app              # Código do Backend (FastAPI)
+ ┃ ┣  routes         # Endpoints da API (cartas, eventos)
+ ┃ ┗  __init__.py
+ ┣  frontend         # Código do Frontend (React + Vite)
+ ┃ ┣  src            # Código-fonte principal (Componentes, Views, CSS)
+ ┃ ┣  public         # Assets públicos
+ ┃ ┗  package.json   # Dependências do frontend
+ ┣  main.py          # Arquivo de inicialização do Backend
+ ┗  requirements.txt # Dependências do Backend Python
 ```
 
 ---
