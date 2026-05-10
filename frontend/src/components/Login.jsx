@@ -6,6 +6,7 @@ export default function Login({ onLogin }) {
     const [senha, setSenha] = useState("");
     const [erro, setErro] = useState("");
     const [loading, setLoading] = useState(false);
+    const [dicaVisivel, setDicaVisivel] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -28,10 +29,6 @@ export default function Login({ onLogin }) {
     return (
         <div className="login-container">
             <div className="login-box">
-                <div className="login-icon">🔐</div>
-                <h1 className="login-title">Entre Nós</h1>
-                <p className="login-subtitle">Um lugar só nosso</p>
-
                 <form onSubmit={handleSubmit} className="login-form">
                     <div className="login-input-wrapper">
                         <input
@@ -59,6 +56,22 @@ export default function Login({ onLogin }) {
                     >
                         {loading ? "Abrindo..." : "Entrar"}
                     </button>
+
+                    <button
+                        type="button"
+                        className="login-dica-btn"
+                        onClick={() => setDicaVisivel(!dicaVisivel)}
+                    >
+                        {dicaVisivel ? "Esconder dica" : "Precisa de uma dica?"}
+                    </button>
+
+                    {dicaVisivel && (
+                        <p className="login-dica-texto">
+                            O autor do livro que você estava lendo quando nós nos conhecemos.
+                            <br />
+                            <span className="login-dica-detalhe">Sem espaços, com a primeira letra maiúscula.</span>
+                        </p>
+                    )}
                 </form>
             </div>
         </div>
