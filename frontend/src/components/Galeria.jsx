@@ -103,7 +103,7 @@ export default function Galeria({ createTrigger, onCreateModeChange }) {
                             >
                                 <div className="galeria-frame">
                                     <img
-                                        src={`${API_URL}${foto.url}`}
+                                        src={foto.url.startsWith('http') ? foto.url : `${import.meta.env.VITE_API_URL || API_URL}${foto.url}`}
                                         alt="Momento especial"
                                         loading="lazy"
                                     />
@@ -136,9 +136,10 @@ export default function Galeria({ createTrigger, onCreateModeChange }) {
                     <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
                         <button className="lightbox-close" onClick={() => setFotoAberta(null)}>✕</button>
                         <img
-                            src={`${API_URL}${fotoAberta.url}`}
+                            src={fotoAberta.url.startsWith('http') ? fotoAberta.url : `${import.meta.env.VITE_API_URL || API_URL}${fotoAberta.url}`}
                             alt="Momento especial"
                             className="lightbox-img"
+
                         />
                     </div>
                 </div>
