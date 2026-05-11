@@ -134,7 +134,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.5rem 0 1.5rem 0;
+    padding: max(1rem, env(safe-area-inset-top)) 1rem 1.5rem 1rem;
 }
 
 .foto-viewer-img-container {

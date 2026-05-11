@@ -82,7 +82,7 @@ export default function Galeria({ createTrigger, onCreateModeChange }) {
             {fotoAberta ? (
                 <div className="foto-viewer-page page-fade-in">
                     <header className="foto-viewer-header">
-                        <button className="btn-action" onClick={() => setFotoAberta(null)}>
+                        <button className="btn-voltar-lista" onClick={() => setFotoAberta(null)}>
                             ← Voltar
                         </button>
                         <button 
