@@ -6,6 +6,8 @@
   padding: 0;
   /* Previne overflow horizontal em celulares */
   max-width: 100%;
+  /* Remove o quadrado azul/cinza ao tocar em botões/menus no iPhone */
+  -webkit-tap-highlight-color: transparent;
 }
 
 html {
