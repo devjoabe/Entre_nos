@@ -1,49 +1,26 @@
-<svg width="512" height="512" viewBox="0 0 680 680" role="img" xmlns="http://www.w3.org/2000/svg">
-  <title>Ícone do app de cartas de amor</title>
-  <desc>Ícone circular com fundo vinho escuro, envelope estilizado em rosa empoeirado e coração centralizado no lacre</desc>
+<svg width="512" height="512" viewBox="0 0 512 512" role="img" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fundo Sólido (previne borda branca no iOS) -->
+  <rect width="512" height="512" fill="#2a0e19"/>
 
-  <defs>
-    <radialGradient id="bgGrad" cx="50%" cy="45%" r="55%">
-      <stop offset="0%" stop-color="#3a1428"/>
-      <stop offset="100%" stop-color="#1a0910"/>
-    </radialGradient>
-    <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#e8a0a8" stop-opacity="0.12"/>
-      <stop offset="100%" stop-color="#e8a0a8" stop-opacity="0"/>
-    </radialGradient>
-    <clipPath id="circleClip">
-      <circle cx="340" cy="340" r="300"/>
-    </clipPath>
-  </defs>
+  <!-- Envelope -->
+  <rect x="76" y="136" width="360" height="240" rx="20" fill="#381322" stroke="#e8a0a8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Linhas do Envelope -->
+  <path d="M76 136 L256 260 L436 136" fill="none" stroke="#e8a0a8" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M76 376 L180 286" fill="none" stroke="#e8a0a8" stroke-width="10" stroke-linecap="round"/>
+  <path d="M436 376 L332 286" fill="none" stroke="#e8a0a8" stroke-width="10" stroke-linecap="round"/>
 
-  <circle cx="340" cy="340" r="300" fill="url(#bgGrad)"/>
-  <circle cx="340" cy="340" r="300" fill="url(#glowGrad)"/>
-  <circle cx="340" cy="340" r="300" fill="none" stroke="#e8a0a8" stroke-width="1.5" stroke-opacity="0.2"/>
-  <circle cx="340" cy="340" r="288" fill="none" stroke="#e8a0a8" stroke-width="0.5" stroke-opacity="0.1"/>
+  <!-- Lacre (Círculo central) -->
+  <circle cx="256" cy="256" r="60" fill="#1a0910" stroke="#e8a0a8" stroke-width="8"/>
 
-  <g clip-path="url(#circleClip)">
-    <g transform="translate(0, -27)">
-      <rect x="170" y="248" width="340" height="238" rx="18" fill="#2a1020" stroke="#e8a0a8" stroke-width="1.5" stroke-opacity="0.35"/>
-      <path d="M170 266 L340 372 L510 266" fill="none" stroke="#e8a0a8" stroke-width="2" stroke-opacity="0.7" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M170 466 L282 358" fill="none" stroke="#e8a0a8" stroke-width="1.5" stroke-opacity="0.4" stroke-linecap="round"/>
-      <path d="M510 466 L398 358" fill="none" stroke="#e8a0a8" stroke-width="1.5" stroke-opacity="0.4" stroke-linecap="round"/>
-
-      <circle cx="340" cy="367" r="30" fill="#1a0910"/>
-      <circle cx="340" cy="367" r="30" fill="none" stroke="#e8a0a8" stroke-width="1.2" stroke-opacity="0.3"/>
-
-      <path d="
-        M340 376
-        C326 366, 318 357, 318 350
-        C318 343, 324 338, 330 338
-        C335 338, 338 341, 340 344
-        C342 341, 345 338, 350 338
-        C356 338, 362 343, 362 350
-        C362 357, 354 366, 340 376Z
-      " fill="#e8a0a8" opacity="0.95"/>
-
-      <path d="M330 340 C325 340, 321 344, 320 348" fill="none" stroke="#f0b8be" stroke-width="1" stroke-linecap="round" opacity="0.5"/>
-    </g>
-  </g>
-
-  <circle cx="340" cy="340" r="300" fill="none" stroke="#e8a0a8" stroke-width="2" stroke-opacity="0.15"/>
+  <!-- Coração centralizado no Lacre -->
+  <path d="
+    M 256 297 
+    C 230 277, 216 257, 216 243
+    C 216 227, 228 215, 244 215
+    C 252 215, 256 219, 256 225
+    C 256 219, 260 215, 268 215
+    C 284 215, 296 227, 296 243
+    C 296 257, 282 277, 256 297 Z" 
+  fill="#e8a0a8"/>
 </svg>
