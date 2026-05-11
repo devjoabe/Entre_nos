@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import CartasGrid from './components/CartasGrid'
 import Timeline from './components/Timeline'
 import Galeria from './components/Galeria'
@@ -6,10 +6,46 @@ import Login from './components/Login'
 import { getToken, saveToken } from './services/api'
 import './App.css'
 
+// SVG icons for each tab's FAB
+const FAB_ICONS = {
+  cartas: (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 7V17C4 18.1046 4.89543 19 6 19H18C19.1046 19 20 18.1046 20 17V7" />
+      <path d="M4 7L12 13L20 7" />
+      <path d="M4 7C4 5.89543 4.89543 5 6 5H18C19.1046 5 20 5.89543 20 7" />
+    </svg>
+  ),
+  timeline: (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+      <path d="M15 5l4 4" />
+    </svg>
+  ),
+  galeria: (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+      <circle cx="12" cy="13" r="4" />
+    </svg>
+  ),
+};
+
+const FAB_LABELS = {
+  cartas: 'Escrever uma Carta',
+  timeline: 'Adicionar Data Marcante',
+  galeria: 'Adicionar foto',
+};
+
 function App() {
   const [activeTab, setActiveTab] = useState('cartas');
   const [introStage, setIntroStage] = useState(0);
   const [autenticado, setAutenticado] = useState(false);
+  const [fabAberto, setFabAberto] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+  const [fabIconKey, setFabIconKey] = useState('cartas');
+  const [iconVisible, setIconVisible] = useState(true);
+
+  // Trigger counter — increments to tell active child to open create mode
+  const [createTrigger, setCreateTrigger] = useState(0);
 
   // Verifica se já tem token salvo ao carregar o app
   useEffect(() => {
@@ -32,10 +68,31 @@ function App() {
     };
   }, [autenticado]);
 
+  // Smooth icon transition when tab changes
+  useEffect(() => {
+    setFabAberto(false);
+    setIconVisible(false);
+    const timer = setTimeout(() => {
+      setFabIconKey(activeTab);
+      setIconVisible(true);
+    }, 100); // 100ms fade out, then swap + fade in
+    return () => clearTimeout(timer);
+  }, [activeTab]);
+
   const handleLogin = (token) => {
     saveToken(token);
-    setIntroStage(0); // reseta intro
+    setIntroStage(0);
     setAutenticado(true);
+  };
+
+  const handleFabClick = () => {
+    if (fabAberto) {
+      // Execute action
+      setCreateTrigger(prev => prev + 1);
+      setFabAberto(false);
+    } else {
+      setFabAberto(true);
+    }
   };
 
   // Não autenticado → Tela de Login
@@ -76,38 +133,84 @@ function App() {
             className={`nav-tab ${activeTab === 'cartas' ? 'active' : ''}`}
             onClick={() => setActiveTab('cartas')}
           >
-            ✉ Cartas
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 7V17C4 18.1046 4.89543 19 6 19H18C19.1046 19 20 18.1046 20 17V7" />
+              <path d="M4 7L12 13L20 7" />
+              <path d="M4 7C4 5.89543 4.89543 5 6 5H18C19.1046 5 20 5.89543 20 7" />
+            </svg>
+            Cartas
           </button>
           <button
             className={`nav-tab ${activeTab === 'timeline' ? 'active' : ''}`}
             onClick={() => setActiveTab('timeline')}
           >
-            ✎ Nossa História
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+            </svg>
+            Nossa História
           </button>
           <button
             className={`nav-tab ${activeTab === 'galeria' ? 'active' : ''}`}
             onClick={() => setActiveTab('galeria')}
           >
-            ✦ Galeria
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+              <circle cx="12" cy="13" r="4" />
+            </svg>
+            Galeria
           </button>
         </div>
       </nav>
 
       <div className="app-container">
-        <header className="app-header">
-          <h1 className="app-title">Entre Nós</h1>
-        </header>
 
         <main className="app-main">
-          {activeTab === 'cartas' && <CartasGrid />}
-          {activeTab === 'timeline' && <Timeline />}
-          {activeTab === 'galeria' && <Galeria />}
+          {activeTab === 'cartas' && (
+            <CartasGrid
+              createTrigger={createTrigger}
+              onCreateModeChange={setIsCreating}
+            />
+          )}
+          {activeTab === 'timeline' && (
+            <Timeline
+              createTrigger={createTrigger}
+              onCreateModeChange={setIsCreating}
+            />
+          )}
+          {activeTab === 'galeria' && (
+            <Galeria
+              createTrigger={createTrigger}
+              onCreateModeChange={setIsCreating}
+            />
+          )}
         </main>
 
         <footer className="app-footer">
-          Feito com muito amor para você.
+          <div className="app-footer-glow" />
+          <span className="app-footer-text">Feito com muito amor para você.</span>
         </footer>
       </div>
+
+      {/* Single FAB — changes icon per tab */}
+      {!isCreating && (
+        <div className={`fab-container ${fabAberto ? 'open' : ''}`}>
+          {fabAberto && (
+            <button className="fab-label" onClick={handleFabClick}>
+              {FAB_LABELS[activeTab]}
+            </button>
+          )}
+          <button
+            className={`fab-btn ${iconVisible ? 'icon-visible' : 'icon-hidden'}`}
+            onClick={handleFabClick}
+            title={FAB_LABELS[activeTab]}
+          >
+            {FAB_ICONS[fabIconKey]}
+          </button>
+        </div>
+      )}
+
+      {/* Backdrop to close FAB */}
+      {fabAberto && <div className="fab-backdrop" onClick={() => setFabAberto(false)} />}
     </div>
   )
 }

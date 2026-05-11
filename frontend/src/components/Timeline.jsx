@@ -4,7 +4,7 @@ import { buscarEventos, deletarEvento } from "../services/api";
 import CriarEvento from "./criarEvento";
 import "./Timeline.css";
 
-export default function Timeline() {
+export default function Timeline({ createTrigger, onCreateModeChange }) {
     const [eventos, setEventos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [mostrarCriar, setMostrarCriar] = useState(false);
@@ -28,6 +28,19 @@ export default function Timeline() {
     useEffect(() => {
         carregarEventos();
     }, [refreshTrigger]);
+
+    // Listen for FAB trigger from App
+    useEffect(() => {
+        if (createTrigger > 0) {
+            setEventoParaEditar(null);
+            setMostrarCriar(true);
+        }
+    }, [createTrigger]);
+
+    // Notify App when create mode changes
+    useEffect(() => {
+        if (onCreateModeChange) onCreateModeChange(mostrarCriar);
+    }, [mostrarCriar]);
 
     const formatarData = (dataStr) => {
         const data = new Date(dataStr);
@@ -60,18 +73,6 @@ export default function Timeline() {
 
     return (
         <div className="timeline-page">
-            <div className="page-actions">
-                <button 
-                    className="btn-primary"
-                    onClick={() => {
-                        setEventoParaEditar(null);
-                        setMostrarCriar(!mostrarCriar);
-                    }}
-                >
-                    {mostrarCriar ? "Voltar para Linha do Tempo" : "✎ Adicionar Data Marcante"}
-                </button>
-            </div>
-
             {eventoSelecionado && createPortal(
                 <div className="modal-overlay" onClick={() => setEventoSelecionado(null)}>
                     <div className="modal-box" onClick={(e) => e.stopPropagation()}>
@@ -81,7 +82,7 @@ export default function Timeline() {
                         <div className="modal-body">
                             <p>{eventoSelecionado.texto}</p>
                         </div>
-                        
+
                         <div className="item-actions" style={{ justifyContent: 'center', marginBottom: '1.5rem' }}>
                             <button className="btn-action edit" onClick={() => handleEditar(eventoSelecionado)}>
                                 ✎ Editar
@@ -90,7 +91,7 @@ export default function Timeline() {
                                 ✕ Excluir
                             </button>
                         </div>
-                        
+
                         <button className="btn-close" onClick={() => setEventoSelecionado(null)}>
                             Fechar
                         </button>
@@ -100,14 +101,28 @@ export default function Timeline() {
             )}
 
             {mostrarCriar ? (
-                <CriarEvento 
-                    onEventoCriado={handleEventoCriado} 
-                    eventoParaEditar={eventoParaEditar}
-                    onCancelarEdicao={() => {
-                        setEventoParaEditar(null);
-                        setMostrarCriar(false);
-                    }}
-                />
+                <>
+                    <button
+                        className="btn-voltar-lista"
+                        onClick={() => {
+                            setMostrarCriar(false);
+                            setEventoParaEditar(null);
+                        }}
+                    >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="15 18 9 12 15 6" />
+                        </svg>
+                        Voltar para Linha do Tempo
+                    </button>
+                    <CriarEvento
+                        onEventoCriado={handleEventoCriado}
+                        eventoParaEditar={eventoParaEditar}
+                        onCancelarEdicao={() => {
+                            setEventoParaEditar(null);
+                            setMostrarCriar(false);
+                        }}
+                    />
+                </>
             ) : (
                 <>
                     {loading ? (
@@ -115,7 +130,7 @@ export default function Timeline() {
                     ) : eventos.length === 0 ? (
                         <div className="timeline-empty empty-state-container">
                             <svg className="empty-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                             </svg>
                             <p className="empty-title">Nenhuma data marcada.</p>
                             <button className="btn-link" onClick={() => setMostrarCriar(true)}>
@@ -130,14 +145,13 @@ export default function Timeline() {
                                 return (
                                     <div key={evento.id} className={`timeline-item ${sideClass}`}>
                                         <div className="timeline-dot"></div>
-                                        <div 
+                                        <div
                                             className="timeline-content"
                                             onClick={() => setEventoSelecionado(evento)}
                                         >
                                             <span className="timeline-date">
                                                 {formatarData(evento.data_evento)}
                                             </span>
-                                            <p className="click-hint">Clique para revelar</p>
                                         </div>
                                     </div>
                                 );

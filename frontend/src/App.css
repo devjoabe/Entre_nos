@@ -81,11 +81,42 @@
 
 .app-footer {
   text-align: center;
-  padding: 2rem 0;
-  color: rgba(255, 255, 255, 0.2);
-  font-size: 0.8rem;
+  padding: 2.5rem 1rem;
   margin-top: auto;
   font-weight: 300;
+  position: relative;
+}
+
+.app-footer-text {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 300;
+  color: rgba(232, 160, 168, 0.5);
+  letter-spacing: 0.5px;
+  position: relative;
+  display: inline-block;
+}
+
+.app-footer-text::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(232, 160, 168, 0.3), transparent);
+}
+
+.app-footer-glow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 60px;
+  background: radial-gradient(ellipse, rgba(232, 160, 168, 0.06) 0%, transparent 70%);
+  pointer-events: none;
 }
 
 @media screen and (max-width: 768px) {
@@ -120,8 +151,8 @@
     transform: translateY(-3px);
   }
 
-  /* Make primary buttons full width on mobile */
-  .btn-primary, .btn-enviar {
+  /* Make form submit buttons full width on mobile */
+  .btn-enviar {
     width: 100%;
     min-width: 100%;
     justify-content: center;
@@ -281,4 +312,105 @@
 
 .btn-action.delete {
     color: #E8A0A0;
+}
+
+/* ===== Unified FAB (Floating Action Button) ===== */
+.fab-container {
+    position: fixed;
+    bottom: 150px;
+    right: 20px;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.fab-btn {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #e8a0a8;
+    border: none;
+    color: #2a0818;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(232, 160, 168, 0.35);
+    transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease;
+    flex-shrink: 0;
+}
+
+.fab-btn:hover {
+    background: #f4b4b4;
+    transform: scale(1.08);
+    box-shadow: 0 6px 25px rgba(232, 160, 168, 0.5);
+}
+
+.fab-btn:active {
+    transform: scale(0.95);
+}
+
+/* Icon transition */
+.fab-btn.icon-visible {
+    opacity: 1;
+}
+
+.fab-btn.icon-visible svg {
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.fab-btn.icon-hidden svg {
+    opacity: 0;
+    transform: scale(0.7);
+    transition: opacity 0.1s ease, transform 0.1s ease;
+}
+
+.fab-label {
+    background: #3a1828;
+    border: 0.5px solid rgba(232, 160, 168, 0.25);
+    color: #e8d0d4;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 300;
+    padding: 0.55rem 1rem;
+    border-radius: 20px;
+    cursor: pointer;
+    white-space: nowrap;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    animation: fabLabelSlideIn 0.2s ease;
+    transition: all 0.2s ease;
+}
+
+.fab-label:hover {
+    background: rgba(232, 160, 168, 0.15);
+    border-color: #e8a0a8;
+    color: #e8a0a8;
+}
+
+@keyframes fabLabelSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.fab-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 99;
+    background: transparent;
+}
+
+@media screen and (max-width: 480px) {
+    .fab-container {
+        bottom: 180px;
+        right: 16px;
+    }
 }

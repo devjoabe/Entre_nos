@@ -2,30 +2,25 @@
     animation: fadeIn 0.5s ease;
 }
 
-.page-actions {
-    text-align: center;
-    margin-bottom: 2rem;
-}
-
-.btn-primary {
-    background: #E8A0A0;
-    color: #1a0b1c;
+/* Back button */
+.btn-voltar-lista {
+    background: transparent;
     border: none;
-    padding: 0.9rem 1.8rem;
-    border-radius: 30px;
-    font-size: 1.05rem;
-    font-weight: 600;
+    color: rgba(232, 160, 168, 0.6);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 300;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 0.4rem;
+    padding: 0.5rem 0;
+    margin-bottom: 0.5rem;
+    transition: color 0.3s ease;
 }
 
-.btn-primary:hover {
-    background: #f4b4b4;
-    transform: scale(1.03);
-    box-shadow: 0 0 15px rgba(232, 160, 160, 0.4);
+.btn-voltar-lista:hover {
+    color: #e8a0a8;
 }
 
 .cartas-loading, .cartas-empty {
@@ -37,104 +32,185 @@
     font-style: italic;
 }
 
-.cartas-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 2rem;
-    padding: 1rem;
+/* Card list */
+.cartas-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 0 0.25rem;
 }
 
-.carta-envelope {
-    background: rgba(30, 15, 25, 0.6);
-    border: 1px solid rgba(232, 160, 160, 0.2);
-    border-radius: 8px;
+/* Individual card */
+.carta-card {
+    background: #2a1020;
+    border: 0.5px solid rgba(232, 160, 168, 0.12);
+    border-radius: 12px;
+    padding: 16px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.carta-card:hover {
+    border-color: rgba(232, 160, 168, 0.3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+.carta-card:active {
+    transform: scale(0.99);
+}
+
+/* Accent bar */
+.carta-accent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: rgba(232, 160, 168, 0.3);
+    border-radius: 12px 0 0 12px;
+}
+
+/* Card header */
+.carta-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.carta-card-titulo {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 16px;
+    font-weight: 400;
+    color: #e8a0a8;
+    max-width: 75%;
+    line-height: 1.3;
+    margin: 0;
+}
+
+.carta-card-data {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 300;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.3);
+    flex-shrink: 0;
+    margin-top: 3px;
+}
+
+/* Card body / excerpt */
+.carta-card-excerpt {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 300;
+    font-size: 12.5px;
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1.75;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin: 0 0 12px 0;
+}
+
+/* Card footer */
+.carta-card-footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-ler-carta {
+    background: transparent;
+    border: none;
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    font-weight: 300;
+    color: rgba(232, 160, 168, 0.45);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: color 0.3s ease;
+    padding: 0;
+}
+
+.btn-ler-carta:hover {
+    color: #e8a0a8;
+}
+
+/* ===== Reading View (Modal) ===== */
+.carta-leitura-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(22, 9, 16, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 2rem;
+    overflow-y: auto;
+    animation: fadeIn 0.3s ease forwards;
+}
+
+.carta-leitura-box {
+    max-width: 500px;
+    width: 100%;
     padding: 2rem;
     text-align: center;
-    cursor: pointer;
-    transition: all 0.4s ease;
-    position: relative;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    margin-top: 2rem;
 }
 
-.carta-envelope:hover {
-    transform: translateY(-5px);
-    border-color: #E8A0A0;
-    box-shadow: 0 8px 25px rgba(232, 160, 160, 0.15);
+.carta-leitura-titulo {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 1.8rem;
+    color: #e8a0a8;
+    margin-bottom: 2rem;
+    line-height: 1.3;
+    border-bottom: 1px solid rgba(232, 160, 168, 0.15);
+    padding-bottom: 1.5rem;
 }
 
-.carta-envelope.aberta {
-    grid-column: 1 / -1;
-    background: rgba(40, 20, 30, 0.8);
-    cursor: default;
-    transform: none;
-    padding: 3rem;
-}
-
-.envelope-cover h3 {
-    font-family: 'Cormorant Garamond', serif;
-    color: #E8A0A0;
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-}
-
-.envelope-icon {
-    font-size: 3rem;
-    color: #C9A96E;
-    display: block;
-    margin-bottom: 1rem;
-    opacity: 0.8;
-}
-
-.click-hint {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.85rem;
-    color: #888;
-    opacity: 0;
-    transition: opacity 0.3s;
-}
-
-.carta-envelope:hover .click-hint {
-    opacity: 1;
-}
-
-.carta-envelope.aberta .envelope-cover {
-    display: none;
-}
-
-.carta-paper {
+.carta-leitura-corpo {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.85;
+    color: rgba(255, 255, 255, 0.7);
     text-align: left;
-    color: #f0f0f0;
-    font-family: 'Inter', sans-serif;
-    line-height: 1.8;
-    font-size: 1.1rem;
-    animation: fadeIn 0.5s ease;
+    white-space: pre-wrap;
+    margin-bottom: 2rem;
 }
 
-.carta-paper h3 {
-    font-family: 'Cormorant Garamond', serif;
-    color: #E8A0A0;
-    font-size: 2rem;
-    margin-bottom: 1.5rem;
-    text-align: center;
-    border-bottom: 1px solid rgba(201, 169, 110, 0.3);
-    padding-bottom: 1rem;
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 @media screen and (max-width: 768px) {
-    .cartas-grid {
-        grid-template-columns: 1fr;
-        padding: 0.5rem;
+    .cartas-list {
+        padding: 0;
     }
-    
-    .carta-envelope.aberta {
+
+    .carta-leitura-box {
         padding: 1.5rem;
+        margin-top: 1rem;
     }
-    
-    .carta-paper h3 {
+
+    .carta-leitura-titulo {
         font-size: 1.5rem;
     }
-    
-    .carta-paper {
-        font-size: 1rem;
+
+    .carta-leitura-corpo {
+        font-size: 15px;
     }
 }

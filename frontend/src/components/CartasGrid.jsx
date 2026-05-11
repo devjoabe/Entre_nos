@@ -1,21 +1,21 @@
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { buscarCartas, deletarCarta } from "../services/api";
 import CriarCarta from "./criarCarta";
 import "./CartasGrid.css";
 
-export default function CartasGrid() {
+export default function CartasGrid({ createTrigger, onCreateModeChange }) {
     const [cartas, setCartas] = useState([]);
     const [loading, setLoading] = useState(true);
     const [mostrarCriar, setMostrarCriar] = useState(false);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
-    const [cartaExpandida, setCartaExpandida] = useState(null);
+    const [cartaAberta, setCartaAberta] = useState(null);
     const [cartaParaEditar, setCartaParaEditar] = useState(null);
 
     const carregarCartas = async () => {
         setLoading(true);
         try {
             const data = await buscarCartas();
-            // Optional: Sort by creation date descending
             const sortedData = data.sort((a, b) => new Date(b.data_criacao) - new Date(a.data_criacao));
             setCartas(sortedData);
         } catch (error) {
@@ -29,32 +29,40 @@ export default function CartasGrid() {
         carregarCartas();
     }, [refreshTrigger]);
 
+    // Listen for FAB trigger from App
+    useEffect(() => {
+        if (createTrigger > 0) {
+            setCartaParaEditar(null);
+            setMostrarCriar(true);
+        }
+    }, [createTrigger]);
+
+    // Notify App when create mode changes
+    useEffect(() => {
+        if (onCreateModeChange) onCreateModeChange(mostrarCriar);
+    }, [mostrarCriar]);
+
     const handleCartaCriada = () => {
         setMostrarCriar(false);
         setCartaParaEditar(null);
         setRefreshTrigger(prev => prev + 1);
     };
 
-    const handleCartaClick = (id) => {
-        if (cartaExpandida === id) {
-            setCartaExpandida(null);
-        } else {
-            setCartaExpandida(id);
-        }
+    const handleLerCarta = (carta) => {
+        setCartaAberta(carta);
     };
 
-    const handleEditar = (e, carta) => {
-        e.stopPropagation();
+    const handleEditar = (carta) => {
+        setCartaAberta(null);
         setCartaParaEditar(carta);
         setMostrarCriar(true);
     };
 
-    const handleDeletar = async (e, id) => {
-        e.stopPropagation();
+    const handleDeletar = async (id) => {
         if (window.confirm("Tem certeza que deseja apagar essa carta?")) {
             try {
                 await deletarCarta(id);
-                setCartaExpandida(null);
+                setCartaAberta(null);
                 setRefreshTrigger(prev => prev + 1);
             } catch (error) {
                 console.error("Erro ao deletar carta", error);
@@ -62,29 +70,37 @@ export default function CartasGrid() {
         }
     };
 
+    const formatarData = (dataStr) => {
+        if (!dataStr) return "";
+        const data = new Date(dataStr);
+        return data.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' });
+    };
+
     return (
         <div className="cartas-page">
-            <div className="page-actions">
-                <button 
-                    className="btn-primary"
-                    onClick={() => {
-                        setCartaParaEditar(null);
-                        setMostrarCriar(!mostrarCriar);
-                    }}
-                >
-                    {mostrarCriar ? "Voltar para Cartas" : "✉ Escrever uma Carta"}
-                </button>
-            </div>
-
             {mostrarCriar ? (
-                <CriarCarta 
-                    onCartaCriada={handleCartaCriada} 
-                    cartaParaEditar={cartaParaEditar}
-                    onCancelarEdicao={() => {
-                        setCartaParaEditar(null);
-                        setMostrarCriar(false);
-                    }}
-                />
+                <>
+                    <button
+                        className="btn-voltar-lista"
+                        onClick={() => {
+                            setMostrarCriar(false);
+                            setCartaParaEditar(null);
+                        }}
+                    >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="15 18 9 12 15 6" />
+                        </svg>
+                        Voltar para Cartas
+                    </button>
+                    <CriarCarta
+                        onCartaCriada={handleCartaCriada}
+                        cartaParaEditar={cartaParaEditar}
+                        onCancelarEdicao={() => {
+                            setCartaParaEditar(null);
+                            setMostrarCriar(false);
+                        }}
+                    />
+                </>
             ) : (
                 <>
                     {loading ? (
@@ -102,43 +118,57 @@ export default function CartasGrid() {
                             </button>
                         </div>
                     ) : (
-                        <div className="cartas-grid">
-                            {cartas.map((carta) => {
-                                const isExpanded = cartaExpandida === carta.id;
-                                
-                                return (
-                                    <div 
-                                        key={carta.id} 
-                                        className={`carta-envelope ${isExpanded ? 'aberta' : ''}`}
-                                        onClick={() => handleCartaClick(carta.id)}
-                                    >
-                                        <div className="envelope-cover">
-                                            <h3>{carta.titulo}</h3>
-                                            <span className="envelope-icon">✉</span>
-                                            <p className="click-hint">Clique para abrir</p>
-                                        </div>
-                                        
-                                        {isExpanded && (
-                                            <div className="carta-paper" onClick={(e) => e.stopPropagation()}>
-                                                <h3>{carta.titulo}</h3>
-                                                <p>{carta.conteudo}</p>
-                                                
-                                                <div className="item-actions">
-                                                    <button className="btn-action edit" onClick={(e) => handleEditar(e, carta)}>
-                                                        ✎ Editar
-                                                    </button>
-                                                    <button className="btn-action delete" onClick={(e) => handleDeletar(e, carta.id)}>
-                                                        ✕ Excluir
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        )}
+                        <div className="cartas-list">
+                            {cartas.map((carta) => (
+                                <div
+                                    key={carta.id}
+                                    className="carta-card"
+                                    onClick={() => handleLerCarta(carta)}
+                                >
+                                    <div className="carta-accent" />
+                                    <div className="carta-card-header">
+                                        <h3 className="carta-card-titulo">{carta.titulo}</h3>
+                                        <span className="carta-card-data">{formatarData(carta.data_criacao)}</span>
                                     </div>
-                                );
-                            })}
+                                    <p className="carta-card-excerpt">{carta.conteudo}</p>
+                                    <div className="carta-card-footer">
+                                        <button className="btn-ler-carta" onClick={(e) => { e.stopPropagation(); handleLerCarta(carta); }}>
+                                            ler carta
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <line x1="5" y1="12" x2="19" y2="12" />
+                                                <polyline points="12 5 19 12 12 19" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     )}
                 </>
+            )}
+
+            {/* Carta reading modal */}
+            {cartaAberta && createPortal(
+                <div className="carta-leitura-overlay" onClick={() => setCartaAberta(null)}>
+                    <div className="carta-leitura-box" onClick={(e) => e.stopPropagation()}>
+                        <h2 className="carta-leitura-titulo">{cartaAberta.titulo}</h2>
+                        <p className="carta-leitura-corpo">{cartaAberta.conteudo}</p>
+
+                        <div className="item-actions" style={{ justifyContent: 'center', marginBottom: '1.5rem' }}>
+                            <button className="btn-action edit" onClick={() => handleEditar(cartaAberta)}>
+                                ✎ Editar
+                            </button>
+                            <button className="btn-action delete" onClick={() => handleDeletar(cartaAberta.id)}>
+                                ✕ Excluir
+                            </button>
+                        </div>
+
+                        <button className="btn-close" onClick={() => setCartaAberta(null)}>
+                            Fechar
+                        </button>
+                    </div>
+                </div>,
+                document.body
             )}
         </div>
     );
