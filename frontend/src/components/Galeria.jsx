@@ -39,6 +39,19 @@ export default function Galeria({ createTrigger, onCreateModeChange }) {
         if (onCreateModeChange) onCreateModeChange(false);
     }, []);
 
+    // Bloqueia o scroll da página enquanto a foto estiver aberta (muito importante no iOS)
+    useEffect(() => {
+        if (fotoAberta) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [fotoAberta]);
+
+
     const carregarFotos = async () => {
         try {
             const data = await buscarFotos();
