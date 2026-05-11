@@ -6,7 +6,6 @@ import Login from './components/Login'
 import { getToken, saveToken } from './services/api'
 import './App.css'
 
-// SVG icons for each tab's FAB
 const FAB_ICONS = {
   cartas: (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -27,82 +26,85 @@ const FAB_ICONS = {
       <circle cx="12" cy="13" r="4" />
     </svg>
   ),
-};
+}
 
 const FAB_LABELS = {
   cartas: 'Escrever uma Carta',
   timeline: 'Adicionar Data Marcante',
   galeria: 'Adicionar foto',
-};
+}
 
 function App() {
-  const [activeTab, setActiveTab] = useState('cartas');
-  const [introStage, setIntroStage] = useState(0);
-  const [autenticado, setAutenticado] = useState(false);
-  const [fabAberto, setFabAberto] = useState(false);
-  const [isCreating, setIsCreating] = useState(false);
-  const [fabIconKey, setFabIconKey] = useState('cartas');
-  const [iconVisible, setIconVisible] = useState(true);
+  const [activeTab, setActiveTab] = useState('cartas')
+  const [introStage, setIntroStage] = useState(0)
+  const [autenticado, setAutenticado] = useState(false)
+  const [fabAberto, setFabAberto] = useState(false)
+  const [isCreating, setIsCreating] = useState(false)
+  const [fabIconKey, setFabIconKey] = useState('cartas')
+  const [iconVisible, setIconVisible] = useState(true)
+  const [createTrigger, setCreateTrigger] = useState(0)
 
-  // Trigger counter — increments to tell active child to open create mode
-  const [createTrigger, setCreateTrigger] = useState(0);
-
-  // Verifica se já tem token salvo ao carregar o app
-  useEffect(() => {
-    const token = getToken();
-    if (token) setAutenticado(true);
-  }, []);
+  // FIX: guarda qual aba estava ativa quando o FAB foi aberto
+  const fabAbaRef = useRef(null)
 
   useEffect(() => {
-    if (!autenticado) return;
+    const token = getToken()
+    if (token) setAutenticado(true)
+  }, [])
 
-    // Sequência de animação só roda após autenticação
-    const t1 = setTimeout(() => setIntroStage(1), 2500);
-    const t2 = setTimeout(() => setIntroStage(2), 3300);
-    const t3 = setTimeout(() => setIntroStage(3), 6500);
-
-    return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-      clearTimeout(t3);
-    };
-  }, [autenticado]);
-
-  // Smooth icon transition when tab changes
   useEffect(() => {
-    setFabAberto(false);
-    setIconVisible(false);
+    if (!autenticado) return
+    const t1 = setTimeout(() => setIntroStage(1), 2500)
+    const t2 = setTimeout(() => setIntroStage(2), 3300)
+    const t3 = setTimeout(() => setIntroStage(3), 6500)
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
+  }, [autenticado])
+
+  // FIX: ao trocar de aba, fecha o FAB e limpa a aba salva no ref
+  useEffect(() => {
+    setFabAberto(false)
+    fabAbaRef.current = null
+
+    setIconVisible(false)
     const timer = setTimeout(() => {
-      setFabIconKey(activeTab);
-      setIconVisible(true);
-    }, 100); // 100ms fade out, then swap + fade in
-    return () => clearTimeout(timer);
-  }, [activeTab]);
+      setFabIconKey(activeTab)
+      setIconVisible(true)
+    }, 100)
+    return () => clearTimeout(timer)
+  }, [activeTab])
 
   const handleLogin = (token) => {
-    saveToken(token);
-    setIntroStage(0);
-    setAutenticado(true);
-  };
+    saveToken(token)
+    setIntroStage(0)
+    setAutenticado(true)
+  }
 
   const handleFabClick = () => {
     if (fabAberto) {
-      // Execute action
-      setCreateTrigger(prev => prev + 1);
-      setFabAberto(false);
+      // FIX: só executa a ação se a aba não mudou desde que o FAB foi aberto
+      if (fabAbaRef.current === activeTab) {
+        setCreateTrigger(prev => prev + 1)
+      }
+      setFabAberto(false)
+      fabAbaRef.current = null
     } else {
-      setFabAberto(true);
+      // FIX: salva qual aba está ativa no momento em que o FAB é aberto
+      fabAbaRef.current = activeTab
+      setFabAberto(true)
     }
-  };
-
-  // Não autenticado → Tela de Login
-  if (!autenticado) {
-    return <Login onLogin={handleLogin} />;
   }
 
-  const subtitulo = "Para guardar nossos sentimentos".split(" ");
+  const handleFabBackdrop = () => {
+    setFabAberto(false)
+    fabAbaRef.current = null
+  }
 
-  // Animação de intro (só na primeira vez após login)
+  if (!autenticado) {
+    return <Login onLogin={handleLogin} />
+  }
+
+  const subtitulo = "Para guardar nossos sentimentos".split(" ")
+
   if (introStage < 3) {
     return (
       <div className="intro-container">
@@ -122,7 +124,7 @@ function App() {
           </p>
         )}
       </div>
-    );
+    )
   }
 
   return (
@@ -163,22 +165,24 @@ function App() {
       </nav>
 
       <div className="app-container">
-
         <main className="app-main">
           {activeTab === 'cartas' && (
             <CartasGrid
               createTrigger={createTrigger}
               onCreateModeChange={setIsCreating}
+              isActive={activeTab === 'cartas'}
             />
           )}
           {activeTab === 'timeline' && (
             <Timeline
+              key="timeline"
               createTrigger={createTrigger}
               onCreateModeChange={setIsCreating}
             />
           )}
           {activeTab === 'galeria' && (
             <Galeria
+              key="galeria"
               createTrigger={createTrigger}
               onCreateModeChange={setIsCreating}
             />
@@ -191,7 +195,6 @@ function App() {
         </footer>
       </div>
 
-      {/* Single FAB — changes icon per tab */}
       {!isCreating && (
         <div className={`fab-container ${fabAberto ? 'open' : ''}`}>
           {fabAberto && (
@@ -209,8 +212,7 @@ function App() {
         </div>
       )}
 
-      {/* Backdrop to close FAB */}
-      {fabAberto && <div className="fab-backdrop" onClick={() => setFabAberto(false)} />}
+      {fabAberto && <div className="fab-backdrop" onClick={handleFabBackdrop} />}
     </div>
   )
 }

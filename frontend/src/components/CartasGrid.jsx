@@ -1,16 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { createPortal } from "react-dom";
 import { buscarCartas, deletarCarta } from "../services/api";
 import CriarCarta from "./criarCarta";
 import "./CartasGrid.css";
 
-export default function CartasGrid({ createTrigger, onCreateModeChange }) {
+export default function CartasGrid({ createTrigger, onCreateModeChange, isActive }) {
     const [cartas, setCartas] = useState([]);
     const [loading, setLoading] = useState(true);
     const [mostrarCriar, setMostrarCriar] = useState(false);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
     const [cartaAberta, setCartaAberta] = useState(null);
     const [cartaParaEditar, setCartaParaEditar] = useState(null);
+
+    // Guarda o último trigger processado — ignora tudo que chegou antes
+    const lastTriggerRef = useRef(createTrigger);
 
     const carregarCartas = async () => {
         setLoading(true);
@@ -29,15 +32,25 @@ export default function CartasGrid({ createTrigger, onCreateModeChange }) {
         carregarCartas();
     }, [refreshTrigger]);
 
-    // Listen for FAB trigger from App
+    // Quando a aba fica inativa: fecha o formulário e atualiza o lastTriggerRef
+    // para que triggers disparados em outras abas sejam ignorados ao voltar
     useEffect(() => {
-        if (createTrigger > 0) {
+        if (!isActive) {
+            setMostrarCriar(false);
+            setCartaParaEditar(null);
+            lastTriggerRef.current = createTrigger;
+        }
+    }, [isActive, createTrigger]);
+
+    // Só abre se o trigger é mais recente que o último processado E a aba está ativa
+    useEffect(() => {
+        if (createTrigger > lastTriggerRef.current && isActive) {
+            lastTriggerRef.current = createTrigger;
             setCartaParaEditar(null);
             setMostrarCriar(true);
         }
-    }, [createTrigger]);
+    }, [createTrigger, isActive]);
 
-    // Notify App when create mode changes
     useEffect(() => {
         if (onCreateModeChange) onCreateModeChange(mostrarCriar);
     }, [mostrarCriar]);
@@ -48,9 +61,7 @@ export default function CartasGrid({ createTrigger, onCreateModeChange }) {
         setRefreshTrigger(prev => prev + 1);
     };
 
-    const handleLerCarta = (carta) => {
-        setCartaAberta(carta);
-    };
+    const handleLerCarta = (carta) => setCartaAberta(carta);
 
     const handleEditar = (carta) => {
         setCartaAberta(null);
@@ -147,13 +158,11 @@ export default function CartasGrid({ createTrigger, onCreateModeChange }) {
                 </>
             )}
 
-            {/* Carta reading modal */}
             {cartaAberta && createPortal(
                 <div className="carta-leitura-overlay" onClick={() => setCartaAberta(null)}>
                     <div className="carta-leitura-box" onClick={(e) => e.stopPropagation()}>
                         <h2 className="carta-leitura-titulo">{cartaAberta.titulo}</h2>
                         <p className="carta-leitura-corpo">{cartaAberta.conteudo}</p>
-
                         <div className="item-actions" style={{ justifyContent: 'center', marginBottom: '1.5rem' }}>
                             <button className="btn-action edit" onClick={() => handleEditar(cartaAberta)}>
                                 ✎ Editar
@@ -162,7 +171,6 @@ export default function CartasGrid({ createTrigger, onCreateModeChange }) {
                                 ✕ Excluir
                             </button>
                         </div>
-
                         <button className="btn-close" onClick={() => setCartaAberta(null)}>
                             Fechar
                         </button>

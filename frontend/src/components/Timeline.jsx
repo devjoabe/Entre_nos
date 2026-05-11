@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { createPortal } from "react-dom";
 import { buscarEventos, deletarEvento } from "../services/api";
 import CriarEvento from "./criarEvento";
@@ -11,6 +11,10 @@ export default function Timeline({ createTrigger, onCreateModeChange }) {
     const [refreshTrigger, setRefreshTrigger] = useState(0);
     const [eventoSelecionado, setEventoSelecionado] = useState(null);
     const [eventoParaEditar, setEventoParaEditar] = useState(null);
+
+    // FIX: guarda o valor de createTrigger no momento em que o componente montou.
+    // Qualquer trigger igual ou anterior a esse valor é ignorado — veio de outra aba.
+    const mountTriggerRef = useRef(createTrigger);
 
     const carregarEventos = async () => {
         setLoading(true);
@@ -29,15 +33,14 @@ export default function Timeline({ createTrigger, onCreateModeChange }) {
         carregarEventos();
     }, [refreshTrigger]);
 
-    // Listen for FAB trigger from App
+    // FIX: só abre o formulário se o trigger veio APÓS a montagem do componente
     useEffect(() => {
-        if (createTrigger > 0) {
+        if (createTrigger > mountTriggerRef.current) {
             setEventoParaEditar(null);
             setMostrarCriar(true);
         }
     }, [createTrigger]);
 
-    // Notify App when create mode changes
     useEffect(() => {
         if (onCreateModeChange) onCreateModeChange(mostrarCriar);
     }, [mostrarCriar]);
@@ -82,7 +85,6 @@ export default function Timeline({ createTrigger, onCreateModeChange }) {
                         <div className="modal-body">
                             <p>{eventoSelecionado.texto}</p>
                         </div>
-
                         <div className="item-actions" style={{ justifyContent: 'center', marginBottom: '1.5rem' }}>
                             <button className="btn-action edit" onClick={() => handleEditar(eventoSelecionado)}>
                                 ✎ Editar
@@ -91,7 +93,6 @@ export default function Timeline({ createTrigger, onCreateModeChange }) {
                                 ✕ Excluir
                             </button>
                         </div>
-
                         <button className="btn-close" onClick={() => setEventoSelecionado(null)}>
                             Fechar
                         </button>
@@ -141,7 +142,6 @@ export default function Timeline({ createTrigger, onCreateModeChange }) {
                         <div className="timeline-container">
                             {eventos.map((evento, index) => {
                                 const sideClass = index % 2 === 0 ? "left" : "right";
-
                                 return (
                                     <div key={evento.id} className={`timeline-item ${sideClass}`}>
                                         <div className="timeline-dot"></div>
