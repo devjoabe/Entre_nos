@@ -1,8 +1,11 @@
 .timeline-loading,
 .timeline-empty {
     text-align: center;
-    color: #f8f9fa;
-    margin-top: 4rem;
+    color: #C9A96E;
+    font-size: 1.2rem;
+    margin-top: 3rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
 }
 
 .empty-icon {
