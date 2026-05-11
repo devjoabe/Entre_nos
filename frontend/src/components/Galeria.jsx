@@ -39,19 +39,6 @@ export default function Galeria({ createTrigger, onCreateModeChange }) {
         if (onCreateModeChange) onCreateModeChange(false);
     }, []);
 
-    // Bloqueia o scroll da página enquanto a foto estiver aberta (muito importante no iOS)
-    useEffect(() => {
-        if (fotoAberta) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = 'unset';
-        }
-        return () => {
-            document.body.style.overflow = 'unset';
-        };
-    }, [fotoAberta]);
-
-
     const carregarFotos = async () => {
         try {
             const data = await buscarFotos();
@@ -92,48 +79,72 @@ export default function Galeria({ createTrigger, onCreateModeChange }) {
 
     return (
         <div className="galeria-page">
-            <header className="galeria-header">
-                <h2>Momentos</h2>
-                <p>Um pouco de tudo que vivemos juntos</p>
-            </header>
-
-            {loading && fotos.length === 0 ? (
-                <div className="loading-container">Carregando memórias...</div>
-            ) : fotos.length === 0 && !loading ? (
-                <div className="empty-galeria">
-                    <p>Ainda não temos fotos aqui. Que tal adicionar a primeira?</p>
+            {fotoAberta ? (
+                <div className="foto-viewer-page page-fade-in">
+                    <header className="foto-viewer-header">
+                        <button className="btn-action" onClick={() => setFotoAberta(null)}>
+                            ← Voltar
+                        </button>
+                        <button 
+                            className="btn-action delete" 
+                            onClick={(e) => handleDelete(e, fotoAberta.id)}
+                            title="Apagar Foto"
+                        >
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M3 6h18"></path>
+                                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                            </svg>
+                        </button>
+                    </header>
+                    <div className="foto-viewer-img-container">
+                        <img
+                            src={fotoAberta.url.startsWith('http') ? fotoAberta.url : `${import.meta.env.VITE_API_URL || API_URL}${fotoAberta.url}`}
+                            alt="Momento especial"
+                            className="foto-viewer-img"
+                        />
+                    </div>
                 </div>
             ) : (
-                <div className="galeria-masonry">
-                    {fotos.map((foto, index) => {
-                        const frameColor = FRAME_COLORS[index % FRAME_COLORS.length];
-                        return (
-                            <div
-                                key={foto.id}
-                                className="galeria-item"
-                                style={{ '--frame-color': frameColor }}
-                                onClick={() => setFotoAberta(foto)}
-                            >
-                                <div className="galeria-frame">
-                                    <img
-                                        src={foto.url.startsWith('http') ? foto.url : `${import.meta.env.VITE_API_URL || API_URL}${foto.url}`}
-                                        alt="Momento especial"
-                                        loading="lazy"
-                                    />
-                                </div>
-                                <div className="galeria-overlay">
-                                    <button
-                                        className="galeria-delete-btn"
-                                        onClick={(e) => handleDelete(e, foto.id)}
-                                        title="Remover lembrança"
+                <>
+                    <header className="galeria-header">
+                        <h2>Momentos</h2>
+                        <p>Um pouco de tudo que vivemos juntos</p>
+                    </header>
+
+                    {loading && fotos.length === 0 ? (
+                        <div className="loading-container">Carregando memórias...</div>
+                    ) : fotos.length === 0 && !loading ? (
+                        <div className="empty-galeria">
+                            <p>Ainda não temos fotos aqui. Que tal adicionar a primeira?</p>
+                        </div>
+                    ) : (
+                        <div className="galeria-masonry">
+                            {fotos.map((foto, index) => {
+                                const frameColor = FRAME_COLORS[index % FRAME_COLORS.length];
+                                return (
+                                    <div
+                                        key={foto.id}
+                                        className="galeria-item"
+                                        style={{ '--frame-color': frameColor }}
+                                        onClick={() => {
+                                            setFotoAberta(foto);
+                                            window.scrollTo(0, 0);
+                                        }}
                                     >
-                                        ✕
-                                    </button>
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
+                                        <div className="galeria-frame">
+                                            <img
+                                                src={foto.url.startsWith('http') ? foto.url : `${import.meta.env.VITE_API_URL || API_URL}${foto.url}`}
+                                                alt="Momento especial"
+                                                loading="lazy"
+                                            />
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
+                </>
             )}
 
             <input
@@ -143,20 +154,6 @@ export default function Galeria({ createTrigger, onCreateModeChange }) {
                 ref={fileInputRef}
                 onChange={handleFileChange}
             />
-
-            {fotoAberta && (
-                <div className="lightbox-backdrop" onClick={() => setFotoAberta(null)}>
-                    <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
-                        <button className="lightbox-close" onClick={() => setFotoAberta(null)}>✕</button>
-                        <img
-                            src={fotoAberta.url.startsWith('http') ? fotoAberta.url : `${import.meta.env.VITE_API_URL || API_URL}${fotoAberta.url}`}
-                            alt="Momento especial"
-                            className="lightbox-img"
-
-                        />
-                    </div>
-                </div>
-            )}
         </div>
     );
 }
