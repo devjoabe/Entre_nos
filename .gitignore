@@ -3,3 +3,5 @@ __pycache__/
 *.pyc
 *.db
 .env
+uploads/
+migrate_to_supabase.py
