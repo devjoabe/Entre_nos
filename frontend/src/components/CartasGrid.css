@@ -104,14 +104,19 @@
 }
 
 .carta-card-titulo {
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-size: 16px;
+    font-family: 'Bel', 'Playfair Display', serif;
+    font-style: normal;
+    font-size: 22px;
     font-weight: 400;
-    color: #e8a0a8;
+    color: #efb0b8;
     max-width: 75%;
-    line-height: 1.3;
+    line-height: 1.5;
     margin: 0;
+    word-spacing: 5px;
+    letter-spacing: 1px;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .carta-card-data {
@@ -125,11 +130,15 @@
 
 /* Card body / excerpt */
 .carta-card-excerpt {
-    font-family: 'Nunito', sans-serif;
-    font-weight: 300;
-    font-size: 12.5px;
-    color: rgba(255, 255, 255, 0.6);
-    line-height: 1.75;
+    font-family: 'Bel', 'Nunito', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.65);
+    line-height: 2;
+    word-spacing: 4px;
+    letter-spacing: 0.8px;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
     display: -webkit-box;
     -webkit-line-clamp: 3;
     line-clamp: 3;
@@ -192,26 +201,38 @@
 }
 
 .carta-leitura-titulo {
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-weight: 500;
-    font-size: 1.8rem;
-    color: #e8a0a8;
+    font-family: 'Bel', 'Playfair Display', serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 2.6rem;
+    color: #efb0b8;
     margin-bottom: 2rem;
-    line-height: 1.3;
+    line-height: 1.5;
+    word-spacing: 6px;
+    letter-spacing: 1.2px;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-shadow: 0 0 12px rgba(232, 160, 168, 0.15);
     border-bottom: 1px solid rgba(232, 160, 168, 0.15);
     padding-bottom: 1.5rem;
 }
 
 .carta-leitura-corpo {
-    font-family: 'Nunito', sans-serif;
-    font-weight: 300;
-    font-size: 16px;
-    line-height: 1.85;
-    color: rgba(255, 255, 255, 0.7);
+    font-family: 'Bel', 'Nunito', sans-serif;
+    font-weight: 400;
+    font-size: 21px;
+    line-height: 2.2;
+    word-spacing: 5px;
+    letter-spacing: 0.8px;
+    color: rgba(255, 255, 255, 0.75);
     text-align: left;
     white-space: pre-wrap;
     margin-bottom: 2rem;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.04);
 }
 
 @keyframes slideUp {
