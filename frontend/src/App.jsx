@@ -161,12 +161,13 @@ function App() {
   }
 
   return (
-    <div 
-      className="app-root page-fade-in"
-      onTouchStart={onTouchStart}
-      onTouchMove={onTouchMove}
-      onTouchEnd={onTouchEnd}
-    >
+    <>
+      <div 
+        className="app-root page-fade-in"
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+      >
       <nav className="app-nav">
         <div className="nav-content">
           <button
@@ -251,7 +252,7 @@ function App() {
       )}
 
       {fabAberto && <div className="fab-backdrop" onClick={handleFabBackdrop} />}
-    </div>
+    </>
   )
 }
 
