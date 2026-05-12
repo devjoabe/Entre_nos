@@ -80,28 +80,37 @@ function App() {
 
   const onTouchStart = (e) => {
     setTouchEnd(null)
-    setTouchStart(e.targetTouches[0].clientX)
+    setTouchStart({
+      x: e.targetTouches[0].clientX,
+      y: e.targetTouches[0].clientY
+    })
   }
 
   const onTouchMove = (e) => {
-    setTouchEnd(e.targetTouches[0].clientX)
+    setTouchEnd({
+      x: e.targetTouches[0].clientX,
+      y: e.targetTouches[0].clientY
+    })
   }
 
   const onTouchEnd = () => {
     if (!touchStart || !touchEnd) return
-    const distance = touchStart - touchEnd
-    const isLeftSwipe = distance > minSwipeDistance
-    const isRightSwipe = distance < -minSwipeDistance
+    const distanceX = touchStart.x - touchEnd.x
+    const distanceY = Math.abs(touchStart.y - touchEnd.y)
+
+    // Se o movimento vertical for significativo, o usuário estava apenas rolando a página
+    if (distanceY > Math.abs(distanceX) || distanceY > 40) return
+
+    const isLeftSwipe = distanceX > minSwipeDistance
+    const isRightSwipe = distanceX < -minSwipeDistance
 
     const tabs = ['cartas', 'timeline', 'galeria']
     const currentIndex = tabs.indexOf(activeTab)
 
     if (isLeftSwipe && currentIndex < tabs.length - 1) {
-      // Swiped left, go to next tab
       setActiveTab(tabs[currentIndex + 1])
     }
     if (isRightSwipe && currentIndex > 0) {
-      // Swiped right, go to previous tab
       setActiveTab(tabs[currentIndex - 1])
     }
   }
