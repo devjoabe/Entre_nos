@@ -29,6 +29,12 @@
     columns: 2;
     column-gap: 10px;
     padding: 0 0.25rem;
+    animation: galeriaFadeIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+@keyframes galeriaFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .galeria-item {
@@ -36,29 +42,7 @@
     margin-bottom: 10px;
     position: relative;
     cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    opacity: 0;
-    animation: galeriaStaggerIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-}
-
-.galeria-item:nth-child(1) { animation-delay: 0.05s; }
-.galeria-item:nth-child(2) { animation-delay: 0.1s; }
-.galeria-item:nth-child(3) { animation-delay: 0.15s; }
-.galeria-item:nth-child(4) { animation-delay: 0.2s; }
-.galeria-item:nth-child(5) { animation-delay: 0.25s; }
-.galeria-item:nth-child(6) { animation-delay: 0.3s; }
-.galeria-item:nth-child(7) { animation-delay: 0.35s; }
-.galeria-item:nth-child(8) { animation-delay: 0.4s; }
-
-@keyframes galeriaStaggerIn {
-    from {
-        opacity: 0;
-        transform: translateY(15px) scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
 }
 
 .galeria-item:hover {
