@@ -24,7 +24,7 @@ INPUT_FILE  = r"C:\Users\Joabe\OneDrive\Documentos\aniversarionam\whatsapp_raw.t
 OUTPUT_FILE = r"C:\Users\Joabe\OneDrive\Documentos\aniversarionam\frontend\public\whatsapp_context.json"
 
 MY_NAME = "joabe"          # nome exato no WhatsApp (case-insensitive)
-TARGET_TOKENS = 30_000     # limite de tokens de saída (aumentado para tirar proveito da capacidade do Gemini)
+TARGET_TOKENS = 60_000     # limite de tokens de saída (aumentado para tirar proveito da capacidade do Gemini)
 CHARS_PER_TOKEN = 4        # estimativa conservadora: 1 token ≈ 4 chars
 TARGET_CHARS = TARGET_TOKENS * CHARS_PER_TOKEN  # 120.000 chars
 
@@ -356,8 +356,8 @@ def extract_context(messages, target_chars):
     scored_sorted = sorted(scored, key=lambda x: -x[1])
     selected = set()
 
-    # 1. Últimas 800 mensagens — base prioritária (contexto mais recente)
-    for i in range(max(0, len(messages) - 800), len(messages)):
+    # 1. Últimas 2000 mensagens — base prioritária (contexto mais recente)
+    for i in range(max(0, len(messages) - 2000), len(messages)):
         if not is_noise(messages[i]["text"]):
             selected.add(i)
 

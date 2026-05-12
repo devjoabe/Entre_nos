@@ -29,6 +29,21 @@ A interface foi projetada para ser minimalista, elegante e focar no que realment
 
 ---
 
+##  Implementação do Chatbot (IA)
+A plataforma conta com um chatbot integrado que simula a minha personalidade utilizando inteligência artificial generativa, respondendo com base em todo o nosso histórico do WhatsApp. 
+**Desafios e Testes Realizados:**
+- **Rate Limits e Escolha de Modelo:** Inicialmente, testamos a API do Groq (modelo `llama-3.3-70b-versatile`) pela sua extrema velocidade. Porém, esbarramos no rígido limite da cota gratuita de 12.000 tokens por minuto, o que causava erros (`429 Too Many Requests`) na segunda mensagem seguida devido ao peso do nosso histórico. Testamos o `gemini-2.5-flash`, mas fomos barrados pela cota estrita de 20 requisições diárias na versão experimental. A solução definitiva e mais estável foi adotar o **Gemini 1.5 Flash** (`gemini-flash-latest`), que nos garantiu 1 milhão de tokens por minuto e 1.500 requisições diárias, suportando perfeitamente a carga.
+- **Engenharia de Prompt e Contexto:** O "cérebro" do bot é alimentado por um JSON gerado via script Python (`filtrar_whatsapp.py`) que varreu mais de 117.000 mensagens reais. O algoritmo filtra e carrega até 60.000 tokens de contexto, englobando as 2.000 mensagens mais recentes, marcos históricos do relacionamento e menções a amigos. Adicionamos restrições no *System Prompt* (como o "tratamento de esquecimento" e foco em respostas curtas) para impedir alucinações e manter a fidelidade exata do tom de conversa.
+
+---
+
+##  Processamento de Fonte (Visão Computacional)
+A implementação da fonte personalizada para as cartas foi elaborada seguindo lógicas fundamentais de Visão Computacional (Pré-processamento de OCR). Enfrentei grandes desafios de variância de dados, como ruído de fundo, traços finos e caligrafia irregular, ao extrair os caracteres de imagens estáticas. 
+
+Para resolver isso, apliquei técnicas robustas de pré-processamento, incluindo binarização (thresholding) e ajuste rigoroso de *bounding boxes* em eixos coordenados (*baselines*). Esses passos foram essenciais para otimizar a leitura de forma semelhante à preparação de dados em motores de classificação baseados na arquitetura clássica do dataset MNIST.
+
+---
+
 ##  Tecnologias Utilizadas
 
 O projeto foi construído usando uma arquitetura moderna separando o Frontend (SPA) do Backend (API).
