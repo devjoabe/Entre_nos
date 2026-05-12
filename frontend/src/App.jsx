@@ -43,6 +43,8 @@ function App() {
   const [fabIconKey, setFabIconKey] = useState('cartas')
   const [iconVisible, setIconVisible] = useState(true)
   const [createTrigger, setCreateTrigger] = useState(0)
+  const [slideDirection, setSlideDirection] = useState('none')
+  const [tabKey, setTabKey] = useState(0)
 
   // Swipe logic states
   const [touchStart, setTouchStart] = useState(null)
@@ -51,6 +53,7 @@ function App() {
 
   // FIX: guarda qual aba estava ativa quando o FAB foi aberto
   const fabAbaRef = useRef(null)
+  const prevTabRef = useRef('cartas')
 
   useEffect(() => {
     const token = getToken()
@@ -69,6 +72,19 @@ function App() {
   useEffect(() => {
     setFabAberto(false)
     fabAbaRef.current = null
+
+    // Determine slide direction
+    const tabs = ['cartas', 'timeline', 'galeria']
+    const prevIndex = tabs.indexOf(prevTabRef.current)
+    const nextIndex = tabs.indexOf(activeTab)
+    if (prevIndex < nextIndex) setSlideDirection('left')
+    else if (prevIndex > nextIndex) setSlideDirection('right')
+    else setSlideDirection('none')
+    prevTabRef.current = activeTab
+    setTabKey(prev => prev + 1)
+
+    // Scroll to top on tab change
+    window.scrollTo({ top: 0, behavior: 'smooth' })
 
     setIconVisible(false)
     const timer = setTimeout(() => {
@@ -214,27 +230,29 @@ function App() {
 
       <div className="app-container">
         <main className="app-main">
-          {activeTab === 'cartas' && (
-            <CartasGrid
-              createTrigger={createTrigger}
-              onCreateModeChange={setIsCreating}
-              isActive={activeTab === 'cartas'}
-            />
-          )}
-          {activeTab === 'timeline' && (
-            <Timeline
-              key="timeline"
-              createTrigger={createTrigger}
-              onCreateModeChange={setIsCreating}
-            />
-          )}
-          {activeTab === 'galeria' && (
-            <Galeria
-              key="galeria"
-              createTrigger={createTrigger}
-              onCreateModeChange={setIsCreating}
-            />
-          )}
+          <div key={tabKey} className={`tab-content slide-${slideDirection}`}>
+            {activeTab === 'cartas' && (
+              <CartasGrid
+                createTrigger={createTrigger}
+                onCreateModeChange={setIsCreating}
+                isActive={activeTab === 'cartas'}
+              />
+            )}
+            {activeTab === 'timeline' && (
+              <Timeline
+                key="timeline"
+                createTrigger={createTrigger}
+                onCreateModeChange={setIsCreating}
+              />
+            )}
+            {activeTab === 'galeria' && (
+              <Galeria
+                key="galeria"
+                createTrigger={createTrigger}
+                onCreateModeChange={setIsCreating}
+              />
+            )}
+          </div>
         </main>
 
         <footer className="app-footer">
