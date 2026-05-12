@@ -317,8 +317,8 @@
 /* ===== Unified FAB (Floating Action Button) ===== */
 .fab-container {
     position: fixed;
-    bottom: 150px;
-    left: 20px;
+    bottom: 30px;
+    right: 20px;
     z-index: 100;
     display: flex;
     align-items: center;
@@ -393,7 +393,7 @@
 @keyframes fabLabelSlideIn {
     from {
         opacity: 0;
-        transform: translateX(-8px);
+        transform: translateX(8px);
     }
     to {
         opacity: 1;
@@ -410,7 +410,7 @@
 
 @media screen and (max-width: 480px) {
     .fab-container {
-        bottom: 180px;
-        left: 16px;
+        bottom: 30px;
+        right: 16px;
     }
 }

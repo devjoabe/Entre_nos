@@ -235,6 +235,11 @@ function App() {
 
       {!isCreating && (
         <div className={`fab-container ${fabAberto ? 'open' : ''}`}>
+          {fabAberto && (
+            <button className="fab-label" onClick={handleFabClick}>
+              {FAB_LABELS[activeTab]}
+            </button>
+          )}
           <button
             className={`fab-btn ${iconVisible ? 'icon-visible' : 'icon-hidden'}`}
             onClick={handleFabClick}
@@ -242,11 +247,6 @@ function App() {
           >
             {FAB_ICONS[fabIconKey]}
           </button>
-          {fabAberto && (
-            <button className="fab-label" onClick={handleFabClick}>
-              {FAB_LABELS[activeTab]}
-            </button>
-          )}
         </div>
       )}
 
