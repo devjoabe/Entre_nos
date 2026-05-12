@@ -242,6 +242,7 @@ function App() {
           <span className="app-footer-text">Feito com muito amor para você.</span>
         </footer>
       </div>
+      </div>
 
       {!isCreating && (
         <div className={`fab-container ${fabAberto ? 'open' : ''}`}>
