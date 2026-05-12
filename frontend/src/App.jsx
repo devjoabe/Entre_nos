@@ -44,6 +44,11 @@ function App() {
   const [iconVisible, setIconVisible] = useState(true)
   const [createTrigger, setCreateTrigger] = useState(0)
 
+  // Swipe logic states
+  const [touchStart, setTouchStart] = useState(null)
+  const [touchEnd, setTouchEnd] = useState(null)
+  const minSwipeDistance = 50
+
   // FIX: guarda qual aba estava ativa quando o FAB foi aberto
   const fabAbaRef = useRef(null)
 
@@ -72,6 +77,34 @@ function App() {
     }, 100)
     return () => clearTimeout(timer)
   }, [activeTab])
+
+  const onTouchStart = (e) => {
+    setTouchEnd(null)
+    setTouchStart(e.targetTouches[0].clientX)
+  }
+
+  const onTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX)
+  }
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return
+    const distance = touchStart - touchEnd
+    const isLeftSwipe = distance > minSwipeDistance
+    const isRightSwipe = distance < -minSwipeDistance
+
+    const tabs = ['cartas', 'timeline', 'galeria']
+    const currentIndex = tabs.indexOf(activeTab)
+
+    if (isLeftSwipe && currentIndex < tabs.length - 1) {
+      // Swiped left, go to next tab
+      setActiveTab(tabs[currentIndex + 1])
+    }
+    if (isRightSwipe && currentIndex > 0) {
+      // Swiped right, go to previous tab
+      setActiveTab(tabs[currentIndex - 1])
+    }
+  }
 
   const handleLogin = (token) => {
     saveToken(token)
@@ -128,7 +161,12 @@ function App() {
   }
 
   return (
-    <div className="app-root page-fade-in">
+    <div 
+      className="app-root page-fade-in"
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+    >
       <nav className="app-nav">
         <div className="nav-content">
           <button
@@ -197,11 +235,6 @@ function App() {
 
       {!isCreating && (
         <div className={`fab-container ${fabAberto ? 'open' : ''}`}>
-          {fabAberto && (
-            <button className="fab-label" onClick={handleFabClick}>
-              {FAB_LABELS[activeTab]}
-            </button>
-          )}
           <button
             className={`fab-btn ${iconVisible ? 'icon-visible' : 'icon-hidden'}`}
             onClick={handleFabClick}
@@ -209,6 +242,11 @@ function App() {
           >
             {FAB_ICONS[fabIconKey]}
           </button>
+          {fabAberto && (
+            <button className="fab-label" onClick={handleFabClick}>
+              {FAB_LABELS[activeTab]}
+            </button>
+          )}
         </div>
       )}
 
