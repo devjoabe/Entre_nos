@@ -1,0 +1,121 @@
+.criar-carta-container {
+    background: rgba(30, 15, 25, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    max-width: 500px;
+    margin: 2rem auto;
+    text-align: center;
+}
+
+.criar-carta-container h2 {
+    color: #E8A0A0;
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+}
+
+.criar-carta-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    gap: 0.4rem;
+}
+
+.form-group label {
+    font-weight: 300;
+    color: #C9A96E;
+    font-size: 0.95rem;
+    font-family: 'Inter', sans-serif;
+}
+
+.form-group input,
+.form-group textarea {
+    padding: 0.9rem;
+    border-radius: 8px;
+    border: 1px solid rgba(232, 160, 160, 0.2);
+    background: rgba(0, 0, 0, 0.3);
+    color: #f8f9fa;
+    font-size: 1rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    transition: all 0.3s ease;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: #888;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #E8A0A0;
+    background: rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 0 3px rgba(232, 160, 160, 0.15);
+}
+
+.btn-enviar {
+    background: #E8A0A0;
+    color: #1a0b1c;
+    border: none;
+    padding: 1rem;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-top: 1rem;
+    font-family: 'Inter', sans-serif;
+}
+
+.btn-enviar:hover:not(:disabled) {
+    background: #f4b4b4;
+    transform: scale(1.03);
+    box-shadow: 0 0 15px rgba(232, 160, 160, 0.4);
+}
+
+.btn-enviar:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+.btn-enviar:disabled {
+    background: #555;
+    color: #888;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+@media screen and (max-width: 768px) {
+    .criar-carta-container {
+        padding: 1.5rem 1rem;
+        margin: 1rem auto;
+        border-radius: 12px;
+        max-width: 100%;
+    }
+
+    .criar-carta-container h2 {
+        font-size: 1.6rem;
+    }
+
+    .form-group textarea {
+        min-height: 130px;
+    }
+
+    .btn-enviar {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1rem;
+    }
+}

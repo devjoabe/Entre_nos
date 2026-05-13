@@ -1,0 +1,448 @@
+.timeline-loading,
+.timeline-empty {
+    text-align: center;
+    color: #C9A96E;
+    font-size: 1.2rem;
+    margin-top: 3rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.8;
+}
+
+.timeline-empty p {
+    font-size: 1.2rem;
+    font-style: italic;
+    font-family: 'Cormorant Garamond', serif;
+    color: #C9A96E;
+}
+
+.timeline-container {
+    position: relative;
+    max-width: 800px;
+    margin: 3rem auto;
+    padding: 2rem 1rem;
+    /* FIX: padding lateral para não colar nas bordas */
+    box-sizing: border-box;
+}
+
+/* Linha vertical */
+.timeline-container::after {
+    content: '';
+    position: absolute;
+    width: 2px;
+    background: linear-gradient(to bottom,
+            rgba(201, 169, 110, 0.1),
+            rgba(201, 169, 110, 0.5),
+            rgba(201, 169, 110, 0.1));
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    margin-left: -1px;
+}
+
+.timeline-item {
+    padding: 10px 48px 10px 40px;
+    /* FIX: padding direito maior para o dot não ser cortado */
+    position: relative;
+    background-color: inherit;
+    width: 50%;
+    box-sizing: border-box;
+    /* FIX: garante que o conteúdo não vaze para fora */
+    overflow: visible;
+    opacity: 0;
+    animation: timelineStaggerIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.timeline-item:nth-child(1) { animation-delay: 0.1s; }
+.timeline-item:nth-child(2) { animation-delay: 0.2s; }
+.timeline-item:nth-child(3) { animation-delay: 0.3s; }
+.timeline-item:nth-child(4) { animation-delay: 0.4s; }
+.timeline-item:nth-child(5) { animation-delay: 0.5s; }
+.timeline-item:nth-child(6) { animation-delay: 0.6s; }
+.timeline-item:nth-child(7) { animation-delay: 0.7s; }
+.timeline-item:nth-child(8) { animation-delay: 0.8s; }
+
+@keyframes timelineStaggerIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.timeline-item.left {
+    left: 0;
+    padding-right: 48px;
+    padding-left: 16px;
+}
+
+.timeline-item.right {
+    left: 50%;
+    padding-left: 48px;
+    padding-right: 16px;
+}
+
+/* Dots */
+.timeline-dot {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    background-color: #C9A96E;
+    border: 3px solid #1a0b1c;
+    border-radius: 50%;
+    z-index: 1;
+    top: 28px;
+    box-shadow: 0 0 8px rgba(201, 169, 110, 0.6);
+    flex-shrink: 0;
+    /* FIX: evita que o dot seja comprimido */
+}
+
+.left .timeline-dot {
+    right: -7px;
+    /* FIX: centralizado sobre a linha */
+}
+
+.right .timeline-dot {
+    left: -7px;
+    /* FIX: centralizado sobre a linha */
+}
+
+/* Cards */
+.timeline-content {
+    padding: 1.25rem 1.25rem 1rem;
+    /* FIX: padding interno mais equilibrado */
+    background: rgba(30, 15, 25, 0.6);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    position: relative;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    /* FIX: garante que o texto quebre e não estoure o card */
+    word-break: break-word;
+    overflow-wrap: break-word;
+    min-width: 0;
+    /* FIX: crítico para flex/grid não deixar o card transbordar */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.timeline-content:hover {
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 0 10px 25px rgba(232, 160, 160, 0.1);
+    border: 1px solid rgba(232, 160, 160, 0.4);
+}
+
+.timeline-content.locked {
+    background: rgba(20, 10, 15, 0.4);
+    filter: grayscale(0.8);
+    cursor: not-allowed;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.timeline-content.locked:hover {
+    transform: none;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+/* Textos internos */
+.timeline-date {
+    display: block;
+    color: #C9A96E;
+    font-size: 0.85rem;
+    font-weight: 400;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.5px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    /* FIX: evita que a data quebre de forma estranha */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.timeline-content h3 {
+    margin: 0 0 0.75rem 0;
+    color: #E8A0A0;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    /* FIX: reduzido levemente para caber melhor em cards menores */
+    font-weight: 600;
+    line-height: 1.3;
+    /* FIX: título longo não vaza */
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+.lock-icon {
+    color: #888;
+    font-weight: 400;
+    font-size: 0.85rem;
+    background: rgba(255, 255, 255, 0.05);
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-family: 'Inter', sans-serif;
+}
+
+.click-to-open {
+    color: #E8A0A0;
+    font-size: 0.85rem;
+    opacity: 0.7;
+    margin-top: 0.75rem;
+    transition: opacity 0.3s;
+    display: block;
+    /* FIX: garante que ocupa linha própria */
+}
+
+.timeline-content:hover .click-to-open {
+    opacity: 1;
+}
+
+.carta-snippet {
+    color: #a0a0a0;
+    font-style: italic;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    /* FIX: levemente menor para caber no card */
+    margin-bottom: 0.8rem;
+    display: block;
+    /* FIX: snippet longo não vaza */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.carta-body {
+    margin-top: 1.2rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid rgba(232, 160, 160, 0.15);
+    color: #f0f0f0;
+    line-height: 1.7;
+    font-size: 1rem;
+    /* FIX: normalizado para não vazar em cards pequenos */
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    animation: fadeIn 0.4s ease forwards;
+    white-space: pre-wrap;
+    word-break: break-word;
+    /* FIX: quebra palavras longas */
+    overflow-wrap: break-word;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ─── RESPONSIVO ─────────────────────────────────────────── */
+
+/* Tablet */
+@media screen and (max-width: 768px) {
+    .timeline-container {
+        padding: 1.5rem 1rem;
+    }
+
+    .timeline-container::after {
+        left: 24px;
+        /* FIX: alinhado com o dot no mobile */
+        margin-left: 0;
+    }
+
+    .timeline-item {
+        width: 100%;
+        padding-left: 58px;
+        /* FIX: espaço suficiente para o dot + gap */
+        padding-right: 12px;
+    }
+
+    .timeline-item.left,
+    .timeline-item.right {
+        left: 0;
+        padding-left: 58px;
+        padding-right: 12px;
+    }
+
+    .left .timeline-dot,
+    .right .timeline-dot {
+        left: 17px;
+        /* FIX: centralizado sobre a linha em mobile */
+        right: auto;
+    }
+
+    .timeline-content h3 {
+        font-size: 1.15rem;
+    }
+
+    .modal-box {
+        padding: 1.5rem;
+        margin: 1rem;
+        max-height: 90vh;
+        /* FIX: modal não ultrapassa a tela */
+        overflow-y: auto;
+    }
+}
+
+/* Mobile pequeno */
+@media screen and (max-width: 480px) {
+    .timeline-container {
+        padding: 1rem 0.75rem;
+        margin: 1.5rem auto;
+    }
+
+    .timeline-item {
+        padding-left: 52px;
+        padding-right: 8px;
+    }
+
+    .timeline-item.left,
+    .timeline-item.right {
+        padding-left: 52px;
+        padding-right: 8px;
+    }
+
+    .timeline-content {
+        padding: 1rem;
+    }
+
+    .timeline-content h3 {
+        font-size: 1.1rem;
+    }
+
+    .timeline-date {
+        font-size: 0.8rem;
+    }
+
+    .carta-body {
+        font-size: 0.95rem;
+    }
+}
+
+/* ─── MODAL ──────────────────────────────────────────────── */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(10, 5, 10, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    animation: fadeIn 0.3s ease forwards;
+    /* FIX: impede que o overlay seja maior que a viewport */
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+.modal-box {
+    background: rgba(30, 15, 25, 0.85);
+    border: 1px solid rgba(232, 160, 160, 0.3);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+    border-radius: 16px;
+    padding: 2.5rem;
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+    animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    /* FIX: modal não ultrapassa a tela em conteúdo longo */
+    max-height: 85vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+    /* FIX: scrollbar discreta */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(201, 169, 110, 0.3) transparent;
+}
+
+.modal-box::-webkit-scrollbar {
+    width: 4px;
+}
+
+.modal-box::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.modal-box::-webkit-scrollbar-thumb {
+    background: rgba(201, 169, 110, 0.3);
+    border-radius: 4px;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modal-date {
+    display: block;
+    color: #E8A0A0;
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    font-family: 'Cormorant Garamond', serif;
+    border-bottom: 1px solid rgba(201, 169, 110, 0.3);
+    padding-bottom: 1rem;
+    word-break: break-word;
+    /* FIX: data longa não vaza do modal */
+}
+
+.modal-body p {
+    color: #f0f0f0;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    /* FIX: normalizado */
+    line-height: 1.75;
+    margin-bottom: 2rem;
+    font-weight: 300;
+    white-space: pre-wrap;
+    text-align: left;
+    word-break: break-word;
+    /* FIX: texto longo não vaza do modal */
+    overflow-wrap: break-word;
+}
+
+.btn-close {
+    background: transparent;
+    border: 1px solid #C9A96E;
+    color: #C9A96E;
+    padding: 0.7rem 2rem;
+    border-radius: 30px;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-close:hover {
+    background: #C9A96E;
+    color: #1a0b1c;
+}

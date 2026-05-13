@@ -1,0 +1,20 @@
+{
+  "name": "Entre Nós",
+  "short_name": "Entre Nós",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#2a0e19",
+  "theme_color": "#0d040f",
+  "icons": [
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

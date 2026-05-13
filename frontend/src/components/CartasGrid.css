@@ -1,0 +1,260 @@
+.cartas-page, .timeline-page, .galeria-page {
+    animation: fadeIn 0.5s ease;
+}
+
+/* Back button */
+.btn-voltar-lista {
+    background: transparent;
+    border: none;
+    color: rgba(232, 160, 168, 0.6);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 300;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0;
+    margin-bottom: 0.5rem;
+    transition: color 0.3s ease;
+}
+
+.btn-voltar-lista:hover {
+    color: #e8a0a8;
+}
+
+.cartas-loading, .cartas-empty {
+    text-align: center;
+    color: #C9A96E;
+    font-size: 1.2rem;
+    margin-top: 3rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+}
+
+/* Card list */
+.cartas-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 0 0.25rem;
+}
+
+/* Individual card */
+.carta-card {
+    background: #2a1020;
+    border: 0.5px solid rgba(232, 160, 168, 0.12);
+    border-radius: 12px;
+    padding: 16px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    opacity: 0;
+    animation: cardStaggerIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.carta-card:nth-child(1) { animation-delay: 0.05s; }
+.carta-card:nth-child(2) { animation-delay: 0.1s; }
+.carta-card:nth-child(3) { animation-delay: 0.15s; }
+.carta-card:nth-child(4) { animation-delay: 0.2s; }
+.carta-card:nth-child(5) { animation-delay: 0.25s; }
+.carta-card:nth-child(6) { animation-delay: 0.3s; }
+.carta-card:nth-child(7) { animation-delay: 0.35s; }
+.carta-card:nth-child(8) { animation-delay: 0.4s; }
+
+@keyframes cardStaggerIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.carta-card:hover {
+    border-color: rgba(232, 160, 168, 0.3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+.carta-card:active {
+    transform: scale(0.99);
+}
+
+/* Accent bar */
+.carta-accent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: rgba(232, 160, 168, 0.3);
+    border-radius: 12px 0 0 12px;
+}
+
+/* Card header */
+.carta-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.carta-card-titulo {
+    font-family: 'Bel', 'Playfair Display', serif;
+    font-style: normal;
+    font-size: 22px;
+    font-weight: 400;
+    color: #efb0b8;
+    max-width: 75%;
+    line-height: 1.5;
+    margin: 0;
+    word-spacing: 5px;
+    letter-spacing: 1px;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.carta-card-data {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 300;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.3);
+    flex-shrink: 0;
+    margin-top: 3px;
+}
+
+/* Card body / excerpt */
+.carta-card-excerpt {
+    font-family: 'Bel', 'Nunito', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.65);
+    line-height: 2;
+    word-spacing: 4px;
+    letter-spacing: 0.8px;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin: 0 0 12px 0;
+}
+
+/* Card footer */
+.carta-card-footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-ler-carta {
+    background: transparent;
+    border: none;
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    font-weight: 300;
+    color: rgba(232, 160, 168, 0.45);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: color 0.3s ease;
+    padding: 0;
+}
+
+.btn-ler-carta:hover {
+    color: #e8a0a8;
+}
+
+/* ===== Reading View (Modal) ===== */
+.carta-leitura-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(22, 9, 16, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 2rem;
+    overflow-y: auto;
+    animation: fadeIn 0.3s ease forwards;
+}
+
+.carta-leitura-box {
+    max-width: 500px;
+    width: 100%;
+    padding: 2rem;
+    text-align: center;
+    animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    margin-top: 2rem;
+}
+
+.carta-leitura-titulo {
+    font-family: 'Bel', 'Playfair Display', serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 2.6rem;
+    color: #efb0b8;
+    margin-bottom: 2rem;
+    line-height: 1.5;
+    word-spacing: 6px;
+    letter-spacing: 1.2px;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-shadow: 0 0 12px rgba(232, 160, 168, 0.15);
+    border-bottom: 1px solid rgba(232, 160, 168, 0.15);
+    padding-bottom: 1.5rem;
+}
+
+.carta-leitura-corpo {
+    font-family: 'Bel', 'Nunito', sans-serif;
+    font-weight: 400;
+    font-size: 21px;
+    line-height: 2.2;
+    word-spacing: 5px;
+    letter-spacing: 0.8px;
+    color: rgba(255, 255, 255, 0.75);
+    text-align: left;
+    white-space: pre-wrap;
+    margin-bottom: 2rem;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.04);
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media screen and (max-width: 768px) {
+    .cartas-list {
+        padding: 0;
+    }
+
+    .carta-leitura-box {
+        padding: 1.5rem;
+        margin-top: 1rem;
+    }
+
+    .carta-leitura-titulo {
+        font-size: 1.5rem;
+    }
+
+    .carta-leitura-corpo {
+        font-size: 15px;
+    }
+}

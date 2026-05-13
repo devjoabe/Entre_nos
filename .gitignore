@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+*.db
+.env
+uploads/
+migrate_to_supabase.py
+whatsapp_context.json
+frontend/.env

@@ -1,0 +1,217 @@
+.galeria-page {
+    padding: 1rem 0;
+    animation: fadeIn 0.8s ease;
+}
+
+.galeria-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.galeria-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    color: #e8a0a8;
+    font-size: 2.4rem;
+    font-weight: 400;
+    margin-bottom: 0.4rem;
+}
+
+.galeria-header p {
+    font-family: 'Nunito', sans-serif;
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 0.9rem;
+    font-weight: 300;
+}
+
+/* ===== Masonry Layout ===== */
+.galeria-masonry {
+    columns: 2;
+    column-gap: 10px;
+    padding: 0 0.25rem;
+    animation: galeriaFadeIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+@keyframes galeriaFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.galeria-item {
+    break-inside: avoid;
+    margin-bottom: 10px;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+}
+
+.galeria-item:hover {
+    transform: scale(1.02);
+}
+
+.galeria-item:active {
+    transform: scale(0.98);
+}
+
+/* Colored frame behind the photo */
+.galeria-frame {
+    background: var(--frame-color, #2a1a3a);
+    border-radius: 10px;
+    padding: 6px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    transition: box-shadow 0.3s ease;
+}
+
+.galeria-item:hover .galeria-frame {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+}
+
+.galeria-frame img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    border-radius: 6px;
+    min-height: 100px;
+}
+
+/* Overlay with delete */
+.galeria-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    background: transparent;
+    transition: background 0.3s ease;
+    pointer-events: none;
+    border-radius: 10px;
+}
+
+.galeria-item:hover .galeria-overlay {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.galeria-delete-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: all 0.3s ease;
+    font-size: 0.75rem;
+    pointer-events: auto;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
+.galeria-item:hover .galeria-delete-btn {
+    opacity: 1;
+}
+
+.galeria-delete-btn:hover {
+    background: #e35d5d;
+    border-color: #e35d5d;
+    transform: scale(1.1);
+}
+
+/* ===== Foto Viewer Integrado ===== */
+.foto-viewer-page {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 120px);
+    animation: fadeIn 0.4s ease;
+    padding-bottom: 2rem;
+}
+
+.foto-viewer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: max(1rem, env(safe-area-inset-top)) 1rem 1.5rem 1rem;
+}
+
+.foto-viewer-img-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.foto-viewer-img {
+    max-width: 100%;
+    max-height: 70vh;
+    object-fit: contain;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* ===== Responsividade ===== */
+@media screen and (max-width: 768px) {
+    .galeria-header h2 {
+        font-size: 2rem;
+    }
+
+    .galeria-masonry {
+        column-gap: 8px;
+    }
+
+    .galeria-item {
+        margin-bottom: 8px;
+    }
+
+    .galeria-frame {
+        padding: 5px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .galeria-masonry {
+        columns: 2;
+        column-gap: 6px;
+    }
+
+    .galeria-item {
+        margin-bottom: 6px;
+    }
+
+    .galeria-frame {
+        padding: 4px;
+        border-radius: 8px;
+    }
+
+    .galeria-frame img {
+        border-radius: 5px;
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.loading-container, .empty-galeria {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: rgba(201, 169, 110, 0.6);
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.2rem;
+    background: rgba(30, 15, 25, 0.3);
+    border-radius: 16px;
+    margin: 0 1rem;
+    border: 1px dashed rgba(232, 160, 168, 0.1);
+}
