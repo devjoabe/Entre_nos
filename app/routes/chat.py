@@ -44,8 +44,8 @@ def build_whatsapp_snippet(data):
     out = ""
     for m in data["selected_messages"]:
         line = f"[{m.get('date', '')}] {m.get('sender', '')}: {m.get('text', '')}\n"
-        # limite de 12.000 chars -- o suficiente pra dar contexto sem estourar a cota de tokens
-        if len(out) + len(line) > 12000:
+        # 40.000 chars da um contexto rico de conversas sem pesar demais no tempo de resposta
+        if len(out) + len(line) > 40000:
             break
         out += line
     return out
@@ -60,8 +60,8 @@ def build_system_prompt(cartas, eventos, memory):
     wa_snippet = build_whatsapp_snippet(wa_data)
 
     joabe_msgs = wa_data.get("joabe_style", {}).get("sample_general", []) if wa_data else []
-    # 25 exemplos sao suficientes pra capturar o estilo sem desperdicar tokens
-    joabe_samples = "\n".join([f"[{m.get('date','')} {m.get('time','')}] joabe: {m.get('text','')}" for m in joabe_msgs][:25])
+    # 60 exemplos capturam bem o estilo sem desperdicar tokens desnecessariamente
+    joabe_samples = "\n".join([f"[{m.get('date','')} {m.get('time','')}] joabe: {m.get('text','')}" for m in joabe_msgs][:60])
 
     cartas_texto = "\n".join([f"[{c.get('data_criacao','')}...] {c.get('titulo','')}: {c.get('conteudo','')[:300]}" for c in cartas])
     eventos_texto = "\n".join([f"[{e.get('data','')}...] {e.get('titulo','')}: {e.get('descricao','')[:150]}" for e in eventos])
