@@ -127,9 +127,11 @@ export default function Chatbot({ onClose }) {
       )
     } catch (e) {
       console.error('Erro ao enviar:', e)
+      // mostra o erro real pra facilitar o debug — quando tiver tudo funcionando pode trocar de volta pra mensagem amigavel
+      const errorMsg = e.message || 'erro ao processar mensagem, tente novamente'
       setMessages(prev => prev.map(m =>
         m.id === streamId
-          ? { ...m, text: 'erro ao processar mensagem, tente novamente', streaming: false, isError: true }
+          ? { ...m, text: errorMsg, streaming: false, isError: true }
           : m
       ))
       setLoading(false)

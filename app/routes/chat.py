@@ -50,7 +50,10 @@ def build_whatsapp_snippet(data):
     return out
 
 def build_system_prompt(cartas, eventos, memory):
-    # nao usa cache aqui porque as cartas e eventos mudam a cada chamada
+    # o cache e baseado na quantidade de cartas e eventos pra invalidar quando algo mudar
+    cache_key = f"joabe_{len(cartas)}_{len(eventos)}"
+    if cache_key in system_prompt_cache:
+        return system_prompt_cache[cache_key]
 
     wa_data = load_whatsapp_context()
     wa_snippet = build_whatsapp_snippet(wa_data)
@@ -201,6 +204,7 @@ CONVERSA DO WHATSAPP:
 
 LEMBRE-SE: Mantenha sempre o RITMO FRAGMENTADO e as REGRAS FIXAS na sua resposta final."""
     
+    system_prompt_cache[cache_key] = prompt
     return prompt
 
 @router.post("")
@@ -242,7 +246,8 @@ async def chat(request: ChatRequest, user=Depends(verify_token)):
         }
     }
 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={gemini_api_key}"
+    # usa o gemini-2.0-flash que e o modelo estavel de producao — mais rapido e sem problemas de timeout
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={gemini_api_key}"
     
     data_bytes = json.dumps(body, ensure_ascii=False).encode('utf-8')
     req = urllib.request.Request(url, data=data_bytes, headers={'Content-Type': 'application/json; charset=utf-8'})
