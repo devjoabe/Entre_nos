@@ -14,6 +14,7 @@ export default function CartasGrid({ createTrigger, onCreateModeChange, isActive
 
     // salva o ultimo clique que o usuario deu pra abrir a tela de criar
     // assim a gente ignora se vier um clique fantasma de outra aba do navegador
+    const lastTriggerRef = useRef(createTrigger);
 
     const carregarCartas = async () => {
         setLoading(true);
