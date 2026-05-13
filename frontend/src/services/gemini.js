@@ -60,7 +60,7 @@ export async function buildSystemPrompt(cartas, eventos) {
 // ─── Envio de mensagem (Backend API) ──────────────────────────────────────────
 export async function sendMessageStream(history, userMessage, promptData, onChunk, onDone, attempt = 1) {
   const token = localStorage.getItem('entre_nos_token');
-  const API_URL = import.meta.env.VITE_API_URL || \`http://\${window.location.hostname}:8000\`;
+  const API_URL = import.meta.env.VITE_API_URL || `http://${window.location.hostname}:8000`;
 
   const body = {
     history: history,
@@ -72,11 +72,11 @@ export async function sendMessageStream(history, userMessage, promptData, onChun
 
   let res;
   try {
-    res = await fetch(\`\${API_URL}/chat\`, {
+    res = await fetch(`${API_URL}/chat`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
-        ...(token ? { "Authorization": \`Bearer \${token}\` } : {})
+        ...(token ? { "Authorization": `Bearer ${token}` } : {})
       },
       body: JSON.stringify(body)
     });
@@ -92,7 +92,7 @@ export async function sendMessageStream(history, userMessage, promptData, onChun
   if (!res.ok) {
     let errBody = {};
     try { errBody = await res.json(); } catch { }
-    const msg = errBody?.detail || \`HTTP \${res.status}\`;
+    const msg = errBody?.detail || `HTTP ${res.status}`;
     console.error('[Chat] Erro HTTP', res.status, ':', msg);
     if ((res.status === 429 || res.status === 503) && attempt < 2) {
       await new Promise(r => setTimeout(r, 2000));
@@ -112,7 +112,7 @@ export async function sendMessageStream(history, userMessage, promptData, onChun
 
   const rawText = data.reply || '...';
   // funcoes pra limpar markdown
-  const stripMarkdown = (t) => t.replace(/\\*\\*(.+?)\\*\\*/g, '$1').replace(/\\*(.+?)\\*/g, '$1').trim();
+  const stripMarkdown = (t) => t.replace(/\*\*(.+?)\*\*/g, '$1').replace(/\*(.+?)\*/g, '$1').trim();
   const text = stripMarkdown(rawText);
 
   // quebra a frase em palavras pra mostrar uma por uma e parecer q tem alguem escrevendo
