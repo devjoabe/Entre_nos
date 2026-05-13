@@ -53,8 +53,8 @@ export function clearPromptCache() {
 }
 
 export async function buildSystemPrompt(cartas, eventos) {
-  // Retornamos os dados brutos para o componente enviar pro backend depois
-  return { cartas, eventos }
+  // retorna os dados brutos -- quem monta o prompt de verdade e o backend
+  return { cartas: cartas || [], eventos: eventos || [] }
 }
 
 // ─── Envio de mensagem (Backend API) ──────────────────────────────────────────
@@ -72,7 +72,7 @@ export async function sendMessageStream(history, userMessage, promptData, onChun
 
   let res;
   try {
-    res = await fetch(`${API_URL}/chat`, {
+    res = await fetch(`${API_URL}/chat/`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',

@@ -86,7 +86,8 @@ export default function Chatbot({ onClose }) {
 
   const handleSend = async () => {
     const text = input.trim()
-    if (!text || loading || !systemPrompt) return
+    // bloqueia se tiver carregando o contexto, ja enviando alguma coisa, ou se nao tiver nada pra mandar
+    if (!text || loading || loadingContext) return
 
     const userMsg = { role: 'user', text, id: Date.now() }
     const streamId = Date.now() + 1

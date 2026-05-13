@@ -49,8 +49,7 @@ def build_whatsapp_snippet(data):
     return out
 
 def build_system_prompt(cartas, eventos, memory):
-    if "joabe" in system_prompt_cache:
-        return system_prompt_cache["joabe"]
+    # nao usa cache aqui porque as cartas e eventos mudam a cada chamada
 
     wa_data = load_whatsapp_context()
     wa_snippet = build_whatsapp_snippet(wa_data)
@@ -201,10 +200,10 @@ CONVERSA DO WHATSAPP:
 
 LEMBRE-SE: Mantenha sempre o RITMO FRAGMENTADO e as REGRAS FIXAS na sua resposta final."""
     
-    system_prompt_cache["joabe"] = prompt
     return prompt
 
 @router.post("")
+@router.post("/")
 async def chat(request: ChatRequest, user=Depends(verify_token)):
     gemini_api_key = os.getenv("GEMINI_API_KEY")
     if not gemini_api_key:
@@ -213,34 +212,48 @@ async def chat(request: ChatRequest, user=Depends(verify_token)):
     system_prompt = build_system_prompt(request.cartas, request.eventos, request.memory)
     
     contents = []
-    # Pega os últimos 10 do histórico
-    for h in request.history[-10:]:
-        contents.append({"role": h.role, "parts": [{"text": h.text[:500]}]})
+    # pega os ultimos 20 turnos do historico e mapeia os roles pro formato que o Gemini entende
+    for h in request.history[-20:]:
+        # o Gemini so aceita 'user' ou 'model' como role
+        role = "model" if h.role == "model" else "user"
+        contents.append({"role": role, "parts": [{"text": h.text[:800]}]})
     
+    # garante que o historico nao comece com uma mensagem do modelo (causaria erro na API)
+    while contents and contents[0]["role"] == "model":
+        contents.pop(0)
+
     contents.append({"role": "user", "parts": [{"text": request.userMessage}]})
 
     body = {
         "systemInstruction": {"parts": [{"text": system_prompt}]},
         "contents": contents,
         "generationConfig": {
-            "temperature": 0.85,
-            "maxOutputTokens": 800,
+            "temperature": 0.9,
+            "maxOutputTokens": 600,
             "topP": 0.95,
-            "topK": 40
         }
     }
 
     url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={gemini_api_key}"
     
-    data_bytes = json.dumps(body).encode('utf-8')
-    req = urllib.request.Request(url, data=data_bytes, headers={'Content-Type': 'application/json'})
+    data_bytes = json.dumps(body, ensure_ascii=False).encode('utf-8')
+    req = urllib.request.Request(url, data=data_bytes, headers={'Content-Type': 'application/json; charset=utf-8'})
     
     try:
-        with urllib.request.urlopen(req) as res:
+        with urllib.request.urlopen(req, timeout=30) as res:
             response_data = json.loads(res.read().decode('utf-8'))
-            parts = response_data.get("candidates", [{}])[0].get("content", {}).get("parts", [])
+            candidates = response_data.get("candidates", [])
+            if not candidates:
+                print(f"[Chat] Sem candidates na resposta: {response_data}")
+                raise HTTPException(status_code=500, detail="Resposta vazia do modelo.")
+            parts = candidates[0].get("content", {}).get("parts", [])
+            # filtra os 'thought' que o gemini-2.5 as vezes inclui no output
             raw_text = "".join([p.get("text", "") for p in parts if not p.get("thought")])
+            if not raw_text.strip():
+                raw_text = "..."
             return {"reply": raw_text}
+    except HTTPException:
+        raise
     except Exception as e:
         print(f"[Chat] Erro na API do Gemini: {e}")
-        raise HTTPException(status_code=500, detail="Erro ao se comunicar com o Gemini.")
+        raise HTTPException(status_code=500, detail=f"Erro ao se comunicar com o Gemini: {str(e)}")
