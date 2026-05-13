@@ -44,7 +44,8 @@ def build_whatsapp_snippet(data):
     out = ""
     for m in data["selected_messages"]:
         line = f"[{m.get('date', '')}] {m.get('sender', '')}: {m.get('text', '')}\n"
-        if len(out) + len(line) > 60000:
+        # limite de 12.000 chars -- o suficiente pra dar contexto sem estourar a cota de tokens
+        if len(out) + len(line) > 12000:
             break
         out += line
     return out
@@ -59,7 +60,8 @@ def build_system_prompt(cartas, eventos, memory):
     wa_snippet = build_whatsapp_snippet(wa_data)
 
     joabe_msgs = wa_data.get("joabe_style", {}).get("sample_general", []) if wa_data else []
-    joabe_samples = "\n".join([f"[{m.get('date','')} {m.get('time','')}] joabe: {m.get('text','')}" for m in joabe_msgs][:80])
+    # 25 exemplos sao suficientes pra capturar o estilo sem desperdicar tokens
+    joabe_samples = "\n".join([f"[{m.get('date','')} {m.get('time','')}] joabe: {m.get('text','')}" for m in joabe_msgs][:25])
 
     cartas_texto = "\n".join([f"[{c.get('data_criacao','')}...] {c.get('titulo','')}: {c.get('conteudo','')[:300]}" for c in cartas])
     eventos_texto = "\n".join([f"[{e.get('data','')}...] {e.get('titulo','')}: {e.get('descricao','')[:150]}" for e in eventos])
@@ -217,10 +219,10 @@ async def chat(request: ChatRequest, user=Depends(verify_token)):
     system_prompt = build_system_prompt(request.cartas, request.eventos, request.memory)
     
     contents = []
-    # pega os ultimos 20 turnos do historico
-    for h in request.history[-20:]:
+    # pega os ultimos 10 turnos do historico (mais do que isso e desperdicio de tokens)
+    for h in request.history[-10:]:
         role = "model" if h.role == "model" else "user"
-        contents.append({"role": role, "parts": [{"text": h.text[:800]}]})
+        contents.append({"role": role, "parts": [{"text": h.text[:400]}]})
     
     # garante que o historico nao comece com mensagem do model
     while contents and contents[0]["role"] == "model":
@@ -246,8 +248,8 @@ async def chat(request: ChatRequest, user=Depends(verify_token)):
         }
     }
 
-    # usa o gemini-2.0-flash que e o modelo estavel de producao — mais rapido e sem problemas de timeout
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={gemini_api_key}"
+    # gemini-1.5-flash: 1.500 requisicoes/dia no plano gratuito (vs 200 do 2.0-flash)
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={gemini_api_key}"
     
     data_bytes = json.dumps(body, ensure_ascii=False).encode('utf-8')
     req = urllib.request.Request(url, data=data_bytes, headers={'Content-Type': 'application/json; charset=utf-8'})
