@@ -4,6 +4,7 @@ from typing import List, Dict, Any, Optional
 import json
 import os
 import urllib.request
+import urllib.error
 from app.auth_middleware import verify_token
 
 router = APIRouter(prefix="/chat", tags=["chat"])
@@ -212,15 +213,22 @@ async def chat(request: ChatRequest, user=Depends(verify_token)):
     system_prompt = build_system_prompt(request.cartas, request.eventos, request.memory)
     
     contents = []
-    # pega os ultimos 20 turnos do historico e mapeia os roles pro formato que o Gemini entende
+    # pega os ultimos 20 turnos do historico
     for h in request.history[-20:]:
-        # o Gemini so aceita 'user' ou 'model' como role
         role = "model" if h.role == "model" else "user"
         contents.append({"role": role, "parts": [{"text": h.text[:800]}]})
     
-    # garante que o historico nao comece com uma mensagem do modelo (causaria erro na API)
+    # garante que o historico nao comece com mensagem do model
     while contents and contents[0]["role"] == "model":
         contents.pop(0)
+
+    # garante alternancia estrita (user->model->user->...), remove duplicatas consecutivas
+    i = 1
+    while i < len(contents):
+        if contents[i]["role"] == contents[i-1]["role"]:
+            contents.pop(i-1)
+        else:
+            i += 1
 
     contents.append({"role": "user", "parts": [{"text": request.userMessage}]})
 
@@ -244,16 +252,23 @@ async def chat(request: ChatRequest, user=Depends(verify_token)):
             response_data = json.loads(res.read().decode('utf-8'))
             candidates = response_data.get("candidates", [])
             if not candidates:
-                print(f"[Chat] Sem candidates na resposta: {response_data}")
-                raise HTTPException(status_code=500, detail="Resposta vazia do modelo.")
+                block_reason = response_data.get("promptFeedback", {}).get("blockReason", "desconhecido")
+                print(f"[Chat] Sem candidates. blockReason: {block_reason} | resposta: {response_data}")
+                raise HTTPException(status_code=500, detail=f"Modelo nao retornou resposta (blocked: {block_reason}).")
             parts = candidates[0].get("content", {}).get("parts", [])
-            # filtra os 'thought' que o gemini-2.5 as vezes inclui no output
+            # filtra as partes de 'thought' que o gemini-2.5 inclui no raciocinio interno
             raw_text = "".join([p.get("text", "") for p in parts if not p.get("thought")])
             if not raw_text.strip():
                 raw_text = "..."
             return {"reply": raw_text}
     except HTTPException:
         raise
+    except urllib.error.HTTPError as e:
+        # captura erros HTTP da propria API do Gemini (400, 429, 500 etc) e loga o corpo da resposta
+        error_body = e.read().decode('utf-8') if hasattr(e, 'read') else str(e)
+        print(f"[Chat] HTTPError {e.code} da API do Gemini: {error_body}")
+        raise HTTPException(status_code=500, detail=f"Gemini API error {e.code}: {error_body[:300]}")
     except Exception as e:
-        print(f"[Chat] Erro na API do Gemini: {e}")
-        raise HTTPException(status_code=500, detail=f"Erro ao se comunicar com o Gemini: {str(e)}")
+        print(f"[Chat] Erro inesperado: {type(e).__name__}: {e}")
+        raise HTTPException(status_code=500, detail=f"Erro interno: {str(e)}")
+
