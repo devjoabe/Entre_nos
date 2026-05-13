@@ -4,7 +4,7 @@ from typing import List, Dict, Any, Optional
 import json
 import os
 import urllib.request
-from app.routes.auth import get_current_user
+from app.auth_middleware import verify_token
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 
@@ -205,7 +205,7 @@ LEMBRE-SE: Mantenha sempre o RITMO FRAGMENTADO e as REGRAS FIXAS na sua resposta
     return prompt
 
 @router.post("")
-async def chat(request: ChatRequest, user=Depends(get_current_user)):
+async def chat(request: ChatRequest, user=Depends(verify_token)):
     gemini_api_key = os.getenv("GEMINI_API_KEY")
     if not gemini_api_key:
         raise HTTPException(status_code=500, detail="Chave da API do Gemini não configurada no backend.")
