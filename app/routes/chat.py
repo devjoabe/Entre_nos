@@ -248,8 +248,8 @@ async def chat(request: ChatRequest, user=Depends(verify_token)):
         }
     }
 
-    # gemini-1.5-flash: 1.500 requisicoes/dia no plano gratuito (vs 200 do 2.0-flash)
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={gemini_api_key}"
+    # gemini-2.0-flash-lite: modelo mais rapido e economico do Gemini 2.0 (~1500 RPD no plano gratuito)
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key={gemini_api_key}"
     
     data_bytes = json.dumps(body, ensure_ascii=False).encode('utf-8')
     req = urllib.request.Request(url, data=data_bytes, headers={'Content-Type': 'application/json; charset=utf-8'})
