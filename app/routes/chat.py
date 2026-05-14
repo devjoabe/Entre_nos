@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from typing import List, Dict, Any, Optional
 import json
 import os
+import time
 import urllib.request
 import urllib.error
 from app.auth_middleware import verify_token
@@ -248,34 +249,39 @@ async def chat(request: ChatRequest, user=Depends(verify_token)):
         }
     }
 
-    # gemini-2.0-flash-lite: modelo mais rapido e economico do Gemini 2.0 (~1500 RPD no plano gratuito)
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key={gemini_api_key}"
+    # gemini-2.5-flash-lite: modelo recomendado atual, GA, otimizado pra alto volume e baixa latencia
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key={gemini_api_key}"
     
     data_bytes = json.dumps(body, ensure_ascii=False).encode('utf-8')
-    req = urllib.request.Request(url, data=data_bytes, headers={'Content-Type': 'application/json; charset=utf-8'})
-    
-    try:
-        with urllib.request.urlopen(req, timeout=30) as res:
-            response_data = json.loads(res.read().decode('utf-8'))
-            candidates = response_data.get("candidates", [])
-            if not candidates:
-                block_reason = response_data.get("promptFeedback", {}).get("blockReason", "desconhecido")
-                print(f"[Chat] Sem candidates. blockReason: {block_reason} | resposta: {response_data}")
-                raise HTTPException(status_code=500, detail=f"Modelo nao retornou resposta (blocked: {block_reason}).")
-            parts = candidates[0].get("content", {}).get("parts", [])
-            # filtra as partes de 'thought' que o gemini-2.5 inclui no raciocinio interno
-            raw_text = "".join([p.get("text", "") for p in parts if not p.get("thought")])
-            if not raw_text.strip():
-                raw_text = "..."
-            return {"reply": raw_text}
-    except HTTPException:
-        raise
-    except urllib.error.HTTPError as e:
-        # captura erros HTTP da propria API do Gemini (400, 429, 500 etc) e loga o corpo da resposta
-        error_body = e.read().decode('utf-8') if hasattr(e, 'read') else str(e)
-        print(f"[Chat] HTTPError {e.code} da API do Gemini: {error_body}")
-        raise HTTPException(status_code=500, detail=f"Gemini API error {e.code}: {error_body[:300]}")
-    except Exception as e:
-        print(f"[Chat] Erro inesperado: {type(e).__name__}: {e}")
-        raise HTTPException(status_code=500, detail=f"Erro interno: {str(e)}")
+
+    max_retries = 2
+    for attempt in range(1, max_retries + 1):
+        req = urllib.request.Request(url, data=data_bytes, headers={'Content-Type': 'application/json; charset=utf-8'})
+        try:
+            with urllib.request.urlopen(req, timeout=30) as res:
+                response_data = json.loads(res.read().decode('utf-8'))
+                candidates = response_data.get("candidates", [])
+                if not candidates:
+                    block_reason = response_data.get("promptFeedback", {}).get("blockReason", "desconhecido")
+                    print(f"[Chat] Sem candidates. blockReason: {block_reason} | resposta: {response_data}")
+                    raise HTTPException(status_code=500, detail=f"Modelo nao retornou resposta (blocked: {block_reason}).")
+                parts = candidates[0].get("content", {}).get("parts", [])
+                # filtra as partes de 'thought' que o gemini-2.5 inclui no raciocinio interno
+                raw_text = "".join([p.get("text", "") for p in parts if not p.get("thought")])
+                if not raw_text.strip():
+                    raw_text = "..."
+                return {"reply": raw_text}
+        except HTTPException:
+            raise
+        except urllib.error.HTTPError as e:
+            error_body = e.read().decode('utf-8') if hasattr(e, 'read') else str(e)
+            print(f"[Chat] HTTPError {e.code} da API do Gemini (tentativa {attempt}): {error_body}")
+            # retry com backoff apenas para 429 (rate limit) e 503 (servico indisponivel)
+            if e.code in (429, 503) and attempt < max_retries:
+                time.sleep(3 * attempt)  # espera 3s na 1a, 6s na 2a
+                continue
+            raise HTTPException(status_code=500, detail=f"Gemini API error {e.code}: {error_body[:300]}")
+        except Exception as e:
+            print(f"[Chat] Erro inesperado: {type(e).__name__}: {e}")
+            raise HTTPException(status_code=500, detail=f"Erro interno: {str(e)}")
 
