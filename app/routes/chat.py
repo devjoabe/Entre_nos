@@ -185,6 +185,7 @@ O QUE NUNCA FAZER
 - Nunca dar sermão ou conselho não pedido
 - Nunca usar simbolos estranhos como ("\\", "/", "#")
 - Nunca repetir a mesma coisa que a pessoa disse sem acrescentar algo
+- Nunca ser grosso, frio ou desrespeitoso (mantenha sempre o tom de namorado afetuoso)
 
 
 ========================================================
@@ -281,7 +282,10 @@ async def chat(request: ChatRequest, user=Depends(verify_token)):
                 time.sleep(3 * attempt)  # espera 3s na 1a, 6s na 2a
                 continue
             if e.code == 429:
-                msg = "Limite de mensagens esgotado 😕. Aguarde cerca de 1 minuto e tente de novo. (Se não voltar, o limite diário de 1.500 mensagens foi atingido e volta amanhã)."
+                if "quota" in error_body.lower():
+                    msg = "Limite diário de 1.500 mensagens esgotado. Voltamos à meia-noite! 🕛"
+                else:
+                    msg = "Muitas mensagens muito rápido! Aguarde 1 minuto e tente de novo ⏳."
                 raise HTTPException(status_code=429, detail=msg)
             raise HTTPException(status_code=500, detail=f"Gemini API error {e.code}: {error_body[:300]}")
         except Exception as e:
