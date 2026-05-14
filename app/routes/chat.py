@@ -283,9 +283,9 @@ async def chat(request: ChatRequest, user=Depends(verify_token)):
                 continue
             if e.code == 429:
                 if "quota" in error_body.lower():
-                    msg = "Limite diário de 1.500 mensagens esgotado. Voltamos à meia-noite! 🕛"
+                    msg = "Limite diário de 1.500 mensagens esgotado. Aguarde 24h para continuarmos a conversa!"
                 else:
-                    msg = "Muitas mensagens muito rápido! Aguarde 1 minuto e tente de novo ⏳."
+                    msg = "Muitas mensagens muito rápido! Aguarde 1 minuto e tente de novo."
                 raise HTTPException(status_code=429, detail=msg)
             raise HTTPException(status_code=500, detail=f"Gemini API error {e.code}: {error_body[:300]}")
         except Exception as e:
